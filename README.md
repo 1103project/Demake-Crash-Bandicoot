@@ -1,3 +1,5 @@
+pygame中文文档转载https://blog.csdn.net/Enderman_xiaohei/article/details/87708373
+
 # Demake-Crash-Bandicoot
 
 1. 【强制】 代码中的命名均不能以下划线或美元符号开始，也不能以下划线或美元符号结束。
