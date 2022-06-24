@@ -11,6 +11,7 @@ class Game:
 
     def run(self):
         while True:
+            GRAPHICS = load_graphics('resourses/img/Crash_bandicoot')
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.display.quit()
@@ -18,11 +19,17 @@ class Game:
                     self.keys = pygame.key.get_pressed()
                 if event.type == pygame.KEYUP:
                     self.keys = pygame.key.get_pressed()
+            image = get_image(GRAPHICS['bandicoot_stand'], 136, 73, 38, 42, (173,44,148), 1.5)
+            self.screen.blit(image, (300, 300))
             pygame.display.update()
             self.clock.tick(30)
 
 
 def load_graphics(path, accept=('.jpg', '.png', '.psd')):
+    '''
+    将path路径下的所有.jpg.png.psd文件导入到一个字典里，key为文件名，value为文件。
+    返回值为一个字典，建议使用时，字典名以文件名命名。
+    '''
     graphics = {}
     for pic in os.listdir(path):
         name, ext = os.path.splitext(pic)
