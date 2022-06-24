@@ -10,7 +10,6 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def run(self):
-        GRAPHICS = load_graphics('resourses/img/Crash_bandicoot')
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -19,8 +18,6 @@ class Game:
                     self.keys = pygame.key.get_pressed()
                 if event.type == pygame.KEYUP:
                     self.keys = pygame.key.get_pressed()
-            image = get_image(GRAPHICS['bandicoot_stand'],136,73,38,42,(0,0,0),1.5)
-            self.screen.blit(image,(300,300))
             pygame.display.update()
             self.clock.tick(30)
 
