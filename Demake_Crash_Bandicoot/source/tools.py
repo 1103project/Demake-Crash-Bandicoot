@@ -4,14 +4,11 @@ import os
 
 class Game:
     def __init__(self):
-        pygame.init()
-        pygame.display.set_mode((800, 450))
         self.screen = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
 
-    def run(self):
+    def run(self,state):
         while True:
-            GRAPHICS = load_graphics('resourses/img/Crash_bandicoot')
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.display.quit()
@@ -19,8 +16,7 @@ class Game:
                     self.keys = pygame.key.get_pressed()
                 if event.type == pygame.KEYUP:
                     self.keys = pygame.key.get_pressed()
-            image = get_image(GRAPHICS['bandicoot_stand'], 136, 73, 38, 42, (173,44,148), 1.5)
-            self.screen.blit(image, (300, 300))
+            state.update(self.screen)
             pygame.display.update()
             self.clock.tick(30)
 
@@ -49,3 +45,4 @@ def get_image(sheet,x,y,width,height,colorkey,scale): #scale 表示放大的倍�
     image.set_colorkey(colorkey)
     image = pygame.transform.scale(image,(int(width*scale),int(height*scale)))
     return image
+

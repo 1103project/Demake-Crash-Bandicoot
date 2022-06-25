@@ -1,10 +1,12 @@
 import pygame
-from source import tools
+from source import tools, setup
+from source.states import main_menu,load_screen,level
 
 
 def main():
     game = tools.Game()
-    game.run()
+    state = level.Level()
+    game.run(state)
 
 
 if __name__ == '__main__':
