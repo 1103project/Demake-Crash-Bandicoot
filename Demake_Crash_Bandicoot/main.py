@@ -5,7 +5,7 @@ from source.states import main_menu,load_screen,level
 
 def main():
     game = tools.Game()
-    state = level.Level()
+    state = main_menu.MainMenu()
     game.run(state)
 
 
