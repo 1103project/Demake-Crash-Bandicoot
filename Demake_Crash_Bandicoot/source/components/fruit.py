@@ -1,6 +1,6 @@
 import pygame
-from source import tools, setup
-from source import contants as C
+from .. import tools, setup
+from .. import constants as C
 
 
 class Fruit(pygame.sprite.Sprite):#水果类继承精灵类

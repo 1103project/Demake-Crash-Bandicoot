@@ -1,2 +1,4 @@
 SCREEN_W, SCREEN_H = 960, 738
 SCREEN_SIZE = (SCREEN_W, SCREEN_H)
+
+FONT = 'FixedSys.ttf'
