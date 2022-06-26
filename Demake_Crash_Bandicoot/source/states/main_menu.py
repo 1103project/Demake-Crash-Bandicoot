@@ -28,6 +28,6 @@ class MainMenu:
         surface.blit(self.caption,self.viewport)
         surface.blit(self.cursor,(90,450))  #(90,450) 表示光标初始位置
 
-        self.info.update()
+        self.info.update(surface)
         self.info.draw(surface)
 

@@ -1,5 +1,6 @@
 import pygame
 from .. import constants as C
+from . import fruit
 pygame.font.init()
 
 class Info:
@@ -7,6 +8,8 @@ class Info:
         self.state = state
         self.create_state_labels()
         self.create_info_labels()
+        self.fruit = fruit.Fruit()
+
 
     def create_state_labels(self):
         self.state_labels = []
@@ -21,11 +24,11 @@ class Info:
         font = pygame.font.SysFont(C.FONT, size)
         label_image = font.render(label,True,(255,255,255)) # 将文字转化为图片，label表示目标文字，True表示抗锯齿，最后是文字颜色
         return label_image
-    def update(self):
+    def update(self, surface):
         pass
-
     def draw(self,surface):
         for label in self.state_labels:
             surface.blit(label[0],label[1])
+        surface.blit(self.fruit.image, self.fruit.rect)
 
 
