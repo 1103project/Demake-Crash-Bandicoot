@@ -24,28 +24,30 @@ class MainMenu:
         self.cursor = pygame.sprite.Sprite()
         self.cursor.image = tools.get_image(setup.GRAPHICS['crate_crash'],136,104,24,24,(173,93,41),3)
         rect = self.cursor.image.get_rect()
-        rect.x, rect.y = (90, 450)
+        rect.x, rect.y = (90, 450)  #(90,450) 表示光标初始位置
         self.cursor.rect = rect
-        self.cursor.state = 'Start Game'#状态机
+        self.cursor.state = 'Start Game'  #初始状态
 
     def update_cursor(self, keys):
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             self.cursor.state = 'Start Game'
             self.cursor.rect.y = 450
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_s]:
             self.cursor.state = 'Quit Game'
             self.cursor.rect.y = 520
         elif keys[pygame.K_RETURN]:
             if self.cursor.state == 'Start Game':
                 pass
-            if self.cursor.state == 'Suit Game':
-                pass
+            if self.cursor.state == 'Quit Game':
+                pygame.quit()
 
     def update(self,surface, keys):
+
         self.update_cursor(keys)
+
         surface.blit(self.background,self.viewport)
         surface.blit(self.caption,self.viewport)
-        surface.blit(self.cursor.image, self.cursor.rect)  #(90,450) 表示光标初始位置
+        surface.blit(self.cursor.image, self.cursor.rect)
 
         self.info.update(surface)
         self.info.draw(surface)
