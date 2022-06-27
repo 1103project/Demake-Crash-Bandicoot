@@ -54,7 +54,7 @@ class Player(pygame.sprite.Sprite):
 
         # for frame_rect in frame_rects:
         for sheet in sheets:
-            right_image = tools.get_image(sheet, 134, 69, 46, 61, (156, 44, 173), 1)
+            right_image = tools.get_image(sheet, 130, 65, 60, 100, (156, 44, 173), 1.5)
             left_image = pygame.transform.flip(right_image, True, False)
             self.right_frames.append(right_image)
             self.left_frames.append(left_image)
@@ -77,5 +77,5 @@ class Player(pygame.sprite.Sprite):
         if self.current_time - self.walking_timer > 100:
             self.walking_timer = self.current_time
             self.frame_index += 1
-            self.frame_index %= 6
+            self.frame_index %= 7
         self.image = self.frames[self.frame_index]
