@@ -34,8 +34,9 @@ class Level:
         self.player.rect.y += self.player.y_vel
 
     def draw(self,surface):
-        surface.blit(self.player.image,self.player.rect)
+
         surface.fill((0,125,125))
+        surface.blit(self.player.image, self.player.rect)
         self.info.draw(surface)
 
 
