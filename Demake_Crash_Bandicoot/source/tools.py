@@ -9,7 +9,7 @@ class Game:
         self.keys = pygame.key.get_pressed()
         self.state_dict = state_dict
         self.state = self.state_dict[start_state]
- 
+
     def update(self):
         if self.state.finished:
             next_state = self.state.next

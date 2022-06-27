@@ -1,3 +1,4 @@
+from .. import setup
 from ..components import info
 from ..components import player
 import pygame
@@ -7,7 +8,16 @@ class Level:
     def __init__(self):
         self.finished = False
         self.next =None
+        self.info = info.Info('level')
+        self.setup_background()
         self.setup_player()
+
+    def setup_background(self):
+        self.background = setup.GRAPHICS['menubackground']
+        rect = self.background.get_rect()
+        self.background = pygame.transform.scale(self.background,(int(rect.width*3),
+                                                                  int(rect.height*3.08)))  #放大，同mainMenu
+        self.background_rect = self.background.get_rect()
 
     def setup_player(self):
         self.player = player.Player('bandicoot')
@@ -26,5 +36,6 @@ class Level:
     def draw(self,surface):
         surface.blit(self.player.image,self.player.rect)
         surface.fill((0,125,125))
+        self.info.draw(surface)
 
 
