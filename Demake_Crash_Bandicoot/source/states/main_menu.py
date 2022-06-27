@@ -36,9 +36,9 @@ class MainMenu:
             self.cursor.state = 'Quit Game'
             self.cursor.rect.y = 520
         elif keys[pygame.K_RETURN]:
-            if self.state == 'Start Game':
+            if self.cursor.state == 'Start Game':
                 pass
-            if self.state == 'Suit Game':
+            if self.cursor.state == 'Suit Game':
                 pass
 
     def update(self,surface, keys):
