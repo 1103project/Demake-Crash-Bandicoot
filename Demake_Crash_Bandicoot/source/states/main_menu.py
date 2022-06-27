@@ -8,6 +8,8 @@ class MainMenu:
         self.setup_background()
         self.setup_cursor()
         self.info = info.Info('main_menu')
+        self.finished = False
+        self.next = 'level'
 
     def setup_background(self):
         self.background = setup.GRAPHICS['menubackground']
@@ -37,7 +39,7 @@ class MainMenu:
             self.cursor.rect.y = 520
         elif keys[pygame.K_RETURN]:
             if self.cursor.state == 'Start Game':
-                pass
+                self.finished = True
             if self.cursor.state == 'Quit Game':
                 pygame.quit()
 

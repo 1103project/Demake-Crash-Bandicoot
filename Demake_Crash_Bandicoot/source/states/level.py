@@ -14,8 +14,8 @@ class Level:
         self.player.rect.x = 300
         self.player.rect.y = 300
 
-    def update(self,surface):
-        # self.player.update(keys)
+    def update(self,surface,keys):
+        self.player.update(keys)
         self.update_player_position()
         self.draw(surface)
 

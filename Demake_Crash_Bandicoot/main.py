@@ -4,9 +4,14 @@ from source.states import main_menu,load_screen,level
 
 
 def main():
-    game = tools.Game()
-    state = main_menu.MainMenu()
-    game.run(state)
+
+    state_dict = {
+        'main_menu': main_menu.MainMenu(),
+        'level': level.Level()
+    }
+
+    game = tools.Game(state_dict,'main_menu')
+    game.run()
 
 
 if __name__ == '__main__':
