@@ -22,17 +22,21 @@ class Player(pygame.sprite.Sprite):
             self.player_data = json.load(f)
 
     def setup_states(self):
+        self.state = 'stand'
         self.face_right = True
         self.dead = False
-        self.big = False
+        self.can_jump = True
 
     def setup_velocities(self):
         self.x_vel = 0
         self.y_vel = 0
+        self.jump_vel = -8
+        self.gravity = C.GRAVITY
+        self.anti_gravity = C.ANTI_GRAVITY
+        self.max_y_vel = 15
 
     def setup_timers(self):
         self.walking_timer = 0
-        self.transition_timer = 0
 
     def load_images(self):
         sheet = setup.GRAPHICS['bandicoot']
@@ -58,24 +62,98 @@ class Player(pygame.sprite.Sprite):
             self.right_frames.append(right_image)
             self.left_frames.append(left_image)
 
-
         self.frame_index = 0
         self.frames = self.right_frames
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_rect()
 
-    def update(self,keys):
+    def update(self, keys):
         self.current_time = pygame.time.get_ticks()
+        self.handle_states(keys)
+
+    def handle_states(self, keys):
+        self.can_jump_or_not(keys)
+        if self.state == 'stand':
+            self.stand(keys)
+        elif self.state == 'walk':
+            self.walk(keys)
+        elif self.state == 'jump':
+            self.jump(keys)
+        # elif self.state == 'die':
+        #     self.die(keys)
+        # elif self.state == 'fall':
+        #     self.fall(keys)
+
+        if self.face_right:
+            self.image = self.right_frames[self.frame_index]
+        else:
+            self.image = self.left_frames[self.frame_index]
+
+    def can_jump_or_not(self, keys):
+        if not keys[pygame.K_SPACE]:
+            self.can_jump = True
+
+    def stand(self, keys):
+        self.frame_index = 0
+        self.x_vel = 0
+        self.y_vel = 0
         if keys[pygame.K_d]:
-            self.x_vel = 5
-            self.y_vel = 0
-            self.frames = self.right_frames
-        if keys[pygame.K_a]:
-            self.x_vel = -5
-            self.y_vel = 0
-            self.frames = self.left_frames
+            self.face_right = True
+            self.state = 'walk'
+        elif keys[pygame.K_a]:
+            self.face_right = False
+            self.state = 'walk'
+        if keys[pygame.K_SPACE] and self.can_jump:
+            self.state = 'jump'
+            self.y_vel = self.jump_vel
+
+    def walk(self, keys):
+
+        if keys[pygame.K_SPACE] and self.can_jump:
+            self.state = 'jump'
+            self.y_vel = self.jump_vel
+
         if self.current_time - self.walking_timer > 100:
+            if self.frame_index < 6:
+                self.frame_index += 1
+            else:
+                self.frame_index = 1
             self.walking_timer = self.current_time
-            self.frame_index += 1
-            self.frame_index %= 7
-        self.image = self.frames[self.frame_index]
+        if keys[pygame.K_d]:
+            self.face_right = True
+            self.x_vel = 5
+        elif keys[pygame.K_a]:
+            self.face_right = False
+            self.x_vel = -5
+        else:
+            self.x_vel = 0
+            self.state = 'stand'
+
+    def jump(self, keys):
+        self.frame_index = 4
+        self.y_vel += self.anti_gravity
+        self.can_jump = False
+        if self.y_vel >= 0:
+            self.state = 'fall'
+
+        if keys[pygame.K_d]:
+            self.x_vel = 3
+        elif keys[pygame.K_a]:
+            self.x_vel = -3
+
+        if not keys[pygame.K_SPACE]:
+            self.state = 'fall'
+
+    def fall(self, keys):
+        self.y_vel = self.calc_vel(self.y_vel, self.gravity, self.max_y_vel)
+
+        if keys[pygame.K_d]:
+            self.x_vel = self.calc_vel(self.x_vel, 0, 5, True)
+        elif keys[pygame.K_a]:
+            self.x_vel = self.calc_vel(self.x_vel, 0, 5, False)
+
+    def calc_vel(self, vel, accel, max_vel, is_positive=True):
+        if is_positive:
+            return min(vel + accel, max_vel)
+        else:
+            return max(vel - accel, -max_vel)
