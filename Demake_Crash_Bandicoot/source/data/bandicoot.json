@@ -15,12 +15,12 @@
     {"x": 249,"y": 174,"width": 45,"height": 56}
   ],
   "speed":{
-        "max_walk_speed":6,
-        "max_run_speed":12,
-        "max_y_velocity":11,
-        "walk_accel":0.15,
-        "run_accel":0.3,
-        "turn_accel": 0.35,
-        "jump_velocity":-10.5
-    }
+    "max_walk_speed":6,
+    "max_run_speed":12,
+    "max_y_velocity":11,
+    "walk_accel":0.15,
+    "run_accel":0.3,
+    "turn_accel": 0.35,
+    "jump_velocity":-10.5
+  }
 }

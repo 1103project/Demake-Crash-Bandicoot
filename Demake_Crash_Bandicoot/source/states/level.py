@@ -46,7 +46,7 @@ class Level:
 
     def setup_ground_items(self):
         self.ground_items_group = pygame.sprite.Group()
-        for name in ['basic']:
+        for name in ['ground','basic']:
             for item in self.map_data[name]:
                 self.ground_items_group.add(stuff.Item(item['x'], item['y'], item['width'], item['height'], name))
 
@@ -86,7 +86,7 @@ class Level:
         else:
             self.player.rect.left = sprite.rect.right
         self.player.x_vel = 0
-
+    #
     def adjust_player_y(self, sprite):
         # downwords
         if self.player.rect.bottom < sprite.rect.bottom:
@@ -98,7 +98,7 @@ class Level:
             self.player.y_vel = 7
             self.player.rect.top = sprite.rect.bottom
             self.player.state = 'fall'
-
+    #
     def check_will_fall(self, sprite):
         sprite.rect.y += 1
         check_group = pygame.sprite.Group.copy(self.ground_items_group)

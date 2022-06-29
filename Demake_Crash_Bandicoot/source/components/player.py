@@ -30,7 +30,7 @@ class Player(pygame.sprite.Sprite):
     def setup_velocities(self):
         self.x_vel = 0
         self.y_vel = 0
-        self.jump_vel = -12
+        self.jump_vel = -15
         self.gravity = C.GRAVITY
         self.anti_gravity = C.ANTI_GRAVITY
         self.max_y_vel = 15
@@ -110,7 +110,6 @@ class Player(pygame.sprite.Sprite):
             self.y_vel = self.jump_vel
 
     def walk(self, keys):
-
         if keys[pygame.K_SPACE] and self.can_jump:
             self.state = 'jump'
             self.y_vel = self.jump_vel
@@ -159,11 +158,6 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_a]:
             self.face_right = False
             self.x_vel = self.calc_vel(self.x_vel, self.x_accel, self.max_x_vel, False)
-
-        if self.rect.bottom > C.GROUND_HEIGHT:
-            self.rect.bottom = C.GROUND_HEIGHT
-            self.y_vel = 0
-            self.state = 'stand'
 
     def calc_vel(self, vel, accel, max_vel, is_positive=True):
         if is_positive:
