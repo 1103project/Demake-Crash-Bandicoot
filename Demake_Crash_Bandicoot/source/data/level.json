@@ -1,4 +1,7 @@
 {
   "image_name": "menubackground",
-  "map": {"start_x": 0,"end_x": 960,"player_x": 70,"player_y": 700}
+  "map": {"start_x": 0,"end_x": 960,"player_x": 70,"player_y": 700},
+  "basic": [{"x":400, "y": 650, "width": 20, "height": 20 }]
+
+
 }
