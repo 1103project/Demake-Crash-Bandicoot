@@ -1,6 +1,7 @@
 from .. import setup
 from ..components import info
 from ..components import player, stuff
+from .. import constants as C
 import pygame
 import json
 import os
@@ -9,7 +10,7 @@ import os
 class Level:
     def __init__(self):
         self.finished = False
-        self.next =None
+        self.next = 'game_over'
         self.info = info.Info('level')
         self.load_map_data()
         self.setup_background()
@@ -27,8 +28,7 @@ class Level:
         self.image_name = self.map_data['image_name']
         self.background = setup.GRAPHICS[self.image_name]
         rect = self.background.get_rect()
-        self.background = pygame.transform.scale(self.background,(int(rect.width*3),
-                                                                   int(rect.height*3.08)))  #放大，同mainMenu
+        self.background = pygame.transform.scale(self.background,(int(rect.width*3),int(rect.height*3)))  #放大，同mainMenu
         self.background_rect = self.background.get_rect()
         self.game_window = setup.SCREEN.get_rect()
         self.game_ground = pygame.Surface((self.background_rect.width,self.background_rect.height))
@@ -46,14 +46,22 @@ class Level:
 
     def setup_ground_items(self):
         self.ground_items_group = pygame.sprite.Group()
-        for name in ['ground','basic']:
+        for name in ['ground']:
             for item in self.map_data[name]:
                 self.ground_items_group.add(stuff.Item(item['x'], item['y'], item['width'], item['height'], name))
 
     def update(self,surface,keys):
+        self.current_time = pygame.time.get_ticks()
         self.player.update(keys)
-        self.update_player_position()
-        self.update_game_window()
+
+        if self.player.dead:
+            if self.current_time - self.player.death_timer > 2000:
+                self.finished = True
+        else:
+            self.update_player_position()
+            self.check_if_go_die()
+            self.update_game_window()
+
         self.draw(surface)
 
     def update_player_position(self):
@@ -112,10 +120,15 @@ class Level:
         if self.player.x_vel > 0 and self.player.rect.centerx > half and self.game_window.right < self.end_x:
             self.game_window.x += self.player.x_vel
 
+
     def draw(self,surface):
         self.game_ground.blit(self.background, self.game_window, self.game_window)
         self.game_ground.blit(self.player.image,self.player.rect)
         surface.blit(self.game_ground,(0,0),self.game_window)
         self.info.draw(surface)
+
+    def check_if_go_die(self):
+        if self.player.rect.y > C.SCREEN_H:
+            self.player.go_die()
 
 

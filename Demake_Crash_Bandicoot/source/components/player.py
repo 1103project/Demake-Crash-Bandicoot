@@ -39,6 +39,7 @@ class Player(pygame.sprite.Sprite):
 
     def setup_timers(self):
         self.walking_timer = 0
+        self.death_timer = 0
 
     def load_images(self):
         sheet = setup.GRAPHICS['bandicoot']
@@ -81,8 +82,8 @@ class Player(pygame.sprite.Sprite):
             self.walk(keys)
         elif self.state == 'jump':
             self.jump(keys)
-        # elif self.state == 'die':
-        #     self.die(keys)
+        elif self.state == 'die':
+            self.die(keys)
         elif self.state == 'fall':
             self.fall(keys)
 
@@ -158,6 +159,18 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_a]:
             self.face_right = False
             self.x_vel = self.calc_vel(self.x_vel, self.x_accel, self.max_x_vel, False)
+
+    def die(self,keys):
+        self.rect.y += self.y_vel
+        self.y_vel += self.anti_gravity
+
+    def go_die(self):
+        self.dead = True
+        self.y_vel = self.jump_vel
+        self.frames_index = 8
+        self.state = 'die'
+        self.death_timer = self.current_time
+
 
     def calc_vel(self, vel, accel, max_vel, is_positive=True):
         if is_positive:

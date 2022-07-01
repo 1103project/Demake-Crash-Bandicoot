@@ -1,6 +1,12 @@
 {
-  "image_name": "menubackground",
-  "map": {"start_x": 0,"end_x": 960,"player_x": 70,"player_y": 700},
-  "basic": [{"x":400, "y": 650, "width": 20, "height": 20 }],
-  "ground": [{"x": 0,"y": 700,"width": 960,"height": 38}]
+  "image_name": "level",
+  "map": {"start_x": 0,"end_x": 5760,"player_x": 100,"player_y": 367},
+  "ground": [
+    {"x": 0,"y": 546,"width": 1314,"height": 165},
+    {"x": 1314,"y": 546,"width": 33,"height": 93},
+    {"x": 1467,"y": 546,"width": 1761,"height": 174},
+    {"x": 3450,"y": 501,"width": 261,"height": 100},
+    {"x": 4008,"y": 546,"width": 177,"height": 165},
+    {"x": 4770,"y": 546,"width": 990,"height": 165}
+  ]
 }
