@@ -72,8 +72,6 @@ class Level:
                 crate_type = crate_data['type']
                 self.brick_group.add(crate.Crate(x, y, crate_type))
 
-
-
     def setup_enemies(self):
         self.enemy_group_dict = {}
         for enemy_group_data in self.map_data['enemy']:
@@ -100,7 +98,7 @@ class Level:
             self.brick_group.update()
             self.crate_group.update()
             for enemy_group in self.enemy_group_dict.values():
-                enemy_group.update()
+                enemy_group.update(self)
 
         self.draw(surface)
 
@@ -188,6 +186,5 @@ class Level:
             self.game_info['bleed'] -= 1
         if self.game_info['bleed'] == 0:
             self.next = 'game_over'
-        else:
-            self.next = 'load_screen'
+
 
