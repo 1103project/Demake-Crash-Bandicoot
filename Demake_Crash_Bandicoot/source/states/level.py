@@ -1,4 +1,4 @@
-from .. import setup
+from .. import setup, tools
 from ..components import info
 from ..components import player, stuff, brick, crate, enemy
 from .. import constants as C
@@ -19,7 +19,7 @@ class Level:
         self.setup_player()
         self.setup_ground_items()
         self.setup_bricks_and_crates()
-        # self.setup_enemies()
+        self.setup_enemies()
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -74,14 +74,14 @@ class Level:
 
 
 
-    # def setup_enemies(self):
-    #     self.enemy_group_dict = {}
-    #     for enemy_group_data in self.map_data['enemy']:
-    #         group = pygame.sprite.Group()
-    #         for enemy_group_id, enemy_list in enemy_group_data.items():
-    #             for enemy_data in enemy_list:
-    #                 group.add(enemy.create_enemy(enemy_data))
-    #             self.enemy_group_dict[enemy_group_id] = group
+    def setup_enemies(self):
+        self.enemy_group_dict = {}
+        for enemy_group_data in self.map_data['enemy']:
+            group = pygame.sprite.Group()
+            for enemy_group_id, enemy_list in enemy_group_data.items():
+                for enemy_data in enemy_list:
+                    group.add(enemy.create_enemy(enemy_data))
+                self.enemy_group_dict[enemy_group_id] = group
 
 
     def update(self,surface,keys):
@@ -96,9 +96,11 @@ class Level:
             self.update_player_position()
             self.check_if_go_die()
             self.update_game_window()
-            self.info.update()
+            self.info.update(surface)
             self.brick_group.update()
             self.crate_group.update()
+            for enemy_group in self.enemy_group_dict.values():
+                enemy_group.update()
 
         self.draw(surface)
 
@@ -116,14 +118,17 @@ class Level:
         self.check_y_collision()
 
     def check_x_collision(self):
-        check_group = pygame.sprite.Group(self.ground_items_group, self.brick_group, self.crate_group)
-        ground_item = pygame.sprite.spritecollideany(self.player, self.ground_items_group, check_group)
+        check_group = pygame.sprite.Group.copy(self.ground_items_group)
+        tools.sprite_group_add(check_group,self.crate_group)
+        ground_item = pygame.sprite.spritecollideany(self.player, check_group)
         if ground_item:
             self.adjust_player_x(ground_item)
 
+
     def check_y_collision(self):
-        check_group = pygame.sprite.Group(self.ground_items_group, self.brick_group, self.crate_group)
-        ground_item = pygame.sprite.spritecollideany(self.player, self.ground_items_group, check_group)
+        check_group = pygame.sprite.Group.copy(self.ground_items_group)
+        tools.sprite_group_add(check_group, self.crate_group)
+        ground_item = pygame.sprite.spritecollideany(self.player, check_group)
         if ground_item:
             self.adjust_player_y(ground_item)
         self.check_will_fall(self.player)
@@ -149,7 +154,8 @@ class Level:
     #
     def check_will_fall(self, sprite):
         sprite.rect.y += 1
-        check_group = pygame.sprite.Group.copy(self.ground_items_group, self.brick_group, self.crate_group)
+        check_group = pygame.sprite.Group.copy(self.ground_items_group)
+        tools.sprite_group_add(check_group, self.crate_group)
         collided = pygame.sprite.spritecollideany(sprite, check_group)
         if not collided and sprite.state != 'jump':
             sprite.state = 'fall'
@@ -166,6 +172,9 @@ class Level:
         self.game_ground.blit(self.player.image,self.player.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
+        for enemy_group in self.enemy_group_dict.values():
+            enemy_group.draw(self.game_ground)
+
         surface.blit(self.game_ground,(0,0),self.game_window)
         self.info.draw(surface)
 

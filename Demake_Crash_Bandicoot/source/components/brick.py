@@ -8,13 +8,13 @@ class Brick(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.brick_type = brick_type
-        bright_frame_rect = []
-        dark_frame_rect = []
+        bright_frame_rects = []
+        dark_frame_rects = []
 
         if not color:
-            self.frame_rects = bright_frame_rect
+            self.frame_rects = bright_frame_rects
         else:
-            self.frame_rects = dark_frame_rect
+            self.frame_rects = dark_frame_rects
 
         self.frames = []
         for frame_rect in self.frame_rects:

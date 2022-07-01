@@ -6,5 +6,5 @@ GRAVITY = 1.5
 ANTI_GRAVITY = 1
 ENEMY_MULTI = 2.5
 BG_MULTI=1
-
+rgb = (156, 44, 173)
 FONT = 'FixedSys.ttf'

@@ -58,3 +58,6 @@ def get_image(sheet,x,y,width,height,colorkey,scale): #scale 表示放大的倍�
     image = pygame.transform.scale(image,(int(width*scale),int(height*scale)))
     return image
 
+def sprite_group_add(group_1,group_2):
+    for sprite in group_2:
+        group_1.add(sprite)
