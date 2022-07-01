@@ -4,8 +4,9 @@ from . import fruit
 pygame.font.init()
 
 class Info:
-    def __init__(self,state):
+    def __init__(self,state, game_info):
         self.state = state
+        self.game_info = game_info
         self.create_state_labels()
         self.create_info_labels()
         self.fruit = fruit.Fruit()

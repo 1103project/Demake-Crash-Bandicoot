@@ -5,9 +5,16 @@ from ..components import info
 
 class MainMenu:
     def __init__(self):
+        game_info = {
+            'fruit': 0,
+            'bleed': 100,
+        }
+        self.start(game_info)
+    def start(self, game_info):
+        self.game_info = game_info
         self.setup_background()
         self.setup_cursor()
-        self.info = info.Info('main_menu')
+        self.info = info.Info('main_menu', self.game_info)
         self.finished = False
         self.next = 'level'
 
@@ -38,6 +45,7 @@ class MainMenu:
             self.cursor.state = 'Quit Game'
             self.cursor.rect.y = 520
         elif keys[pygame.K_RETURN]:
+            self.reset_game_info()
             if self.cursor.state == 'Start Game':
                 self.finished = True
             if self.cursor.state == 'Quit Game':
@@ -53,4 +61,10 @@ class MainMenu:
 
         self.info.update(surface)
         self.info.draw(surface)
+
+    def reset_game_info(self):
+        self.game_info.update({
+            'fruit':0,
+            'bleed':100
+        })
 

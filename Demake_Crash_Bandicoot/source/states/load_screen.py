@@ -2,13 +2,14 @@ import pygame
 from .. components import info
 
 class  GameOver():
-    def __init__(self):
+    def start(self, game_info):
+        self.game_info = game_info
         self.game_info = 'game_over'
         self.finished = False
         self.next = 'main_menu'
         self.duration = 2000
         self.timer = 0
-        self.info = info.Info('game_over')
+        self.info = info.Info('game_over', game_info)
 
     def update(self, surface, keys):
         self.draw(surface)

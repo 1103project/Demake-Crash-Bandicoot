@@ -1,6 +1,6 @@
 from .. import setup
 from ..components import info
-from ..components import player, stuff
+from ..components import player, stuff, enemy
 from .. import constants as C
 import pygame
 import json
@@ -8,15 +8,17 @@ import os
 
 
 class Level:
-    def __init__(self):
+    def start(self, game_info):
+        self.game_info = game_info
         self.finished = False
         self.next = 'game_over'
-        self.info = info.Info('level')
+        self.info = info.Info('level', game_info)
         self.load_map_data()
         self.setup_background()
         self.setup_start_position()
         self.setup_player()
         self.setup_ground_items()
+        # self.setup_enemies()
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -49,6 +51,15 @@ class Level:
         for name in ['ground']:
             for item in self.map_data[name]:
                 self.ground_items_group.add(stuff.Item(item['x'], item['y'], item['width'], item['height'], name))
+    # def setup_enemies(self):
+    #     self.enemy_group_dict = {}
+    #     for enemy_group_data in self.map_data['enemy']:
+    #         group = pygame.sprite.Group()
+    #         for enemy_group_id, enemy_list in enemy_group_data.items():
+    #             for enemy_data in enemy_list:
+    #                 group.add(enemy.create_enemy(enemy_data))
+    #             self.enemy_group_dict[enemy_group_id] = group
+
 
     def update(self,surface,keys):
         self.current_time = pygame.time.get_ticks()
@@ -57,6 +68,7 @@ class Level:
         if self.player.dead:
             if self.current_time - self.player.death_timer > 2000:
                 self.finished = True
+                self.update_game_info()
         else:
             self.update_player_position()
             self.check_if_go_die()
@@ -131,4 +143,11 @@ class Level:
         if self.player.rect.y > C.SCREEN_H:
             self.player.go_die()
 
+    def update_game_info(self):
+        if self.player.dead:
+            self.game_info['bleed'] -= 1
+        if self.game_info['bleed'] == 0:
+            self.next = 'game_over'
+        else:
+            self.next = 'load_screen'
 
