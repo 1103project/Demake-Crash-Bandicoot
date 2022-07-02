@@ -72,7 +72,9 @@ class Level:
             for crate_data in self.map_data['crate']:
                 x, y = crate_data['x'], crate_data['y']
                 crate_type = crate_data['type']
-                self.brick_group.add(crate.Crate(x, y, crate_type))
+
+
+                self.crate_group.add(crate.Crate(x, y, crate_type))
 
     def setup_enemies(self):
         self.dying_group = pygame.sprite.Group()
