@@ -106,9 +106,11 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_a]:
             self.face_right = False
             self.state = 'walk'
+
         if keys[pygame.K_SPACE] and self.can_jump:
             self.state = 'jump'
             self.y_vel = self.jump_vel
+
 
     def walk(self, keys):
         if keys[pygame.K_SPACE] and self.can_jump:
@@ -170,6 +172,7 @@ class Player(pygame.sprite.Sprite):
         self.frames_index = 8
         self.state = 'die'
         self.death_timer = self.current_time
+
 
 
     def calc_vel(self, vel, accel, max_vel, is_positive=True):

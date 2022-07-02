@@ -10,7 +10,7 @@ class Item(pygame.sprite.Sprite):
 
 
 class Checkpoint(Item):
-    def __init__(self, x, y, w, h, Checkpoint_type, enemy_groupid=None, name='checkpoint'):
+    def __init__(self, x, y, w, h, checkpoint_type, enemy_groupid=None, name='checkpoint'):
         Item.__init__(self, x, y, w, h, name)
-        self.checkpoint_type = Checkpoint_type
+        self.checkpoint_type = checkpoint_type
         self.enemy_groupid = enemy_groupid
