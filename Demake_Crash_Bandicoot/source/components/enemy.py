@@ -53,23 +53,26 @@ class Enemy(pygame.sprite.Sprite):
     def handle_states(self):
         if self.state == 'walk':
             self.walk()
-        elif self.state == 'jump':
-            self.jump()
-        elif self.state == 'die':
-            self.die()
         elif self.state == 'fall':
             self.fall()
+        elif self.state == 'die':
+            self.die()
+        elif self.state == 'trampled':
+            self.trampled()
+        elif self.state == 'span':
+            self.span()
 
         if self.direction:
             self.image = self.right_frames[self.frame_index]
         else:
             self.image = self.left_frames[self.frame_index]
 
-    def update_position(self,level):
+    def update_position(self, level):
         self.rect.x += self.x_vel
         self.check_x_collisions(level)
         self.rect.y += self.y_vel
-        self.check_y_collision(level)
+        if self.state != 'die':
+            self.check_y_collisions(level)
 
     def check_x_collisions(self,level):
         sprite = pygame.sprite.spritecollideany(self,level.ground_items_group)
@@ -77,7 +80,7 @@ class Enemy(pygame.sprite.Sprite):
             self.direction = 1 if self.direction == 0 else 0
             self.x_vel *= -1
 
-    def check_y_collision(self,level):
+    def check_y_collisions(self,level):
         check_group = pygame.sprite.Group.copy(level.ground_items_group)
         tools.sprite_group_add(check_group,level.crate_group)
         sprite = pygame.sprite.spritecollideany(self,check_group)
@@ -99,22 +102,44 @@ class Enemy(pygame.sprite.Sprite):
             self.image = self.frames[self.frame_index]
             self.timer = self.current_time
 
+    def die(self):
+        self.y_vel = 2
+        self.rect.y += self.y_vel
+        self.y_vel += self.gravity
+        if self.rect.y > C.SCREEN_H:
+            self.kill()
+
+    def go_die(self, how):
+        self.death_timer = self.current_time
+        if how == 'span':
+            self.state = 'die'
+        elif how == 'trampled':
+            self.state = 'trampled'
+
+    def span(self):
+        self.kill()
+
+    def trampled(self):
+        self.kill()
+
 class Turtle(Enemy):
     def __init__(self, x, y_bottom, direction, name):
         frame_rects = [(84, 111, 64, 29), (148, 111, 64, 29)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
-
-
 
 class Flyingfish(Enemy):
     def __init__(self, x, y_bottom, direction, name):
         frame_rects = [(118, 89, 35, 54), (153, 89, 35, 54)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
 
-
-
 class Slim(Enemy):
     def __init__(self, x, y_bottom, direction, name):
         frame_rects = [(114, 53, 73, 93), (0, 0, 5, 5)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
+        self.x_vel = 0
+
+
+
+
+
 

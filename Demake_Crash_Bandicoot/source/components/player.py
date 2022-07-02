@@ -26,6 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.face_right = True
         self.dead = False
         self.can_jump = True
+        self.span = False
 
     def setup_velocities(self):
         self.x_vel = 0
@@ -38,6 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.x_accel = 2
 
     def setup_timers(self):
+        self.span_timer = 0  # 旋转攻击时长
         self.walking_timer = 0
         self.death_timer = 0
 
@@ -73,6 +75,8 @@ class Player(pygame.sprite.Sprite):
     def update(self, keys):
         self.current_time = pygame.time.get_ticks()
         self.handle_states(keys)
+        if self.span :
+            self.span_attack_check()
 
     def handle_states(self, keys):
         self.can_jump_or_not(keys)
@@ -83,7 +87,7 @@ class Player(pygame.sprite.Sprite):
         elif self.state == 'jump':
             self.jump(keys)
         elif self.state == 'die':
-            self.die(keys)
+            self.die()
         elif self.state == 'fall':
             self.fall(keys)
 
@@ -103,32 +107,43 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d]:
             self.face_right = True
             self.state = 'walk'
+
         elif keys[pygame.K_a]:
             self.face_right = False
             self.state = 'walk'
 
         if keys[pygame.K_SPACE] and self.can_jump:
-            self.state = 'jump'
-            self.y_vel = self.jump_vel
+            if self.span != True:
+                self.state = 'jump'
+                self.y_vel = self.jump_vel
+
+        elif keys[pygame.K_j]:
+            self.span_attack()
+            self.span_attack_check()
 
 
     def walk(self, keys):
         if keys[pygame.K_SPACE] and self.can_jump:
             self.state = 'jump'
             self.y_vel = self.jump_vel
-
         if self.current_time - self.walking_timer > 100:
-            if self.frame_index < 6:
-                self.frame_index += 1
-            else:
-                self.frame_index = 1
+            if self.span != True:
+                if self.frame_index < 6:
+                    self.frame_index += 1
+                else:
+                    self.frame_index = 1
             self.walking_timer = self.current_time
         if keys[pygame.K_d]:
-            self.face_right = True
-            self.x_vel = 10
+            if self.span != True:
+                self.face_right = True
+                self.x_vel = 10
         elif keys[pygame.K_a]:
-            self.face_right = False
-            self.x_vel = -10
+            if self.span != True:
+                self.face_right = False
+                self.x_vel = -10
+        elif keys[pygame.K_j]:
+            self.span_attack()
+            self.span_attack_check()
         else:
             self.x_vel = 0
             self.state = 'stand'
@@ -148,6 +163,9 @@ class Player(pygame.sprite.Sprite):
             # self.x_vel = -10
             self.face_right = False
             self.x_vel = self.calc_vel(self.x_vel, self.x_accel, self.max_x_vel, False)
+        elif keys[pygame.K_j]:
+            self.span_attack()
+            self.span_attack_check()
 
         if not keys[pygame.K_SPACE]:
             self.state = 'fall'
@@ -161,8 +179,11 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_a]:
             self.face_right = False
             self.x_vel = self.calc_vel(self.x_vel, self.x_accel, self.max_x_vel, False)
+        elif keys[pygame.K_j]:
+            self.span_attack()
+            self.span_attack_check()
 
-    def die(self,keys):
+    def die(self):
         self.rect.y += self.y_vel
         self.y_vel += self.anti_gravity
 
@@ -173,10 +194,26 @@ class Player(pygame.sprite.Sprite):
         self.state = 'die'
         self.death_timer = self.current_time
 
-
-
     def calc_vel(self, vel, accel, max_vel, is_positive=True):
         if is_positive:
             return min(vel + accel, max_vel)
         else:
             return max(vel - accel, -max_vel)
+
+    def span_attack(self):
+        self.span = True
+        self.span_timer = pygame.time.get_ticks()
+
+    def span_attack_check(self):
+        if pygame.time.get_ticks() - self.span_timer < 100:
+            self.frame_index = 12
+        elif pygame.time.get_ticks() - self.span_timer < 200:
+            self.frame_index = 13
+        elif pygame.time.get_ticks() - self.span_timer < 300:
+            self.frame_index = 14
+        elif pygame.time.get_ticks() - self.span_timer < 400:
+            self.frame_index = 15
+        elif pygame.time.get_ticks() - self.span_timer >= 500:
+            self.span = False
+        if self.span != True:
+            self.frame_index = 1

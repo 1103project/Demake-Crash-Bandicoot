@@ -24,7 +24,7 @@ class Level:
 
     def load_map_data(self):
         file_name = 'level.json'
-        file_path = os.path.join('source/data',file_name)
+        file_path = os.path.join('source/data', file_name)
         with open(file_path) as f:
             self.map_data = json.load(f)
 
@@ -32,15 +32,16 @@ class Level:
         self.image_name = self.map_data['image_name']
         self.background = setup.GRAPHICS[self.image_name]
         rect = self.background.get_rect()
-        self.background = pygame.transform.scale(self.background,(int(rect.width*3),int(rect.height*3)))  #放大，同mainMenu
+        self.background = pygame.transform.scale(self.background,
+                                                 (int(rect.width * 3), int(rect.height * 3)))  # 放大，同mainMenu
         self.background_rect = self.background.get_rect()
         self.game_window = setup.SCREEN.get_rect()
-        self.game_ground = pygame.Surface((self.background_rect.width,self.background_rect.height))
+        self.game_ground = pygame.Surface((self.background_rect.width, self.background_rect.height))
 
     def setup_start_position(self):
         self.positions = []
         data = self.map_data['map']
-        self.positions.append((data['start_x'],data['end_x'],data['player_x'],data['player_y']))
+        self.positions.append((data['start_x'], data['end_x'], data['player_x'], data['player_y']))
         self.start_x, self.end_x, self.player_x, self.player_y = self.positions[0]
 
     def setup_player(self):
@@ -74,6 +75,7 @@ class Level:
                 self.brick_group.add(crate.Crate(x, y, crate_type))
 
     def setup_enemies(self):
+        self.dying_group = pygame.sprite.Group()
         self.enemy_group = pygame.sprite.Group()
         self.enemy_group_dict = {}
         for enemy_group_data in self.map_data['enemy']:
@@ -91,8 +93,7 @@ class Level:
             enemy_groupid = item.get('enemy_groupid')
             self.checkpoint_group.add(stuff.Checkpoint(x, y, w, h, checkpoint_type, enemy_groupid))
 
-
-    def update(self,surface,keys):
+    def update(self, surface, keys):
         self.current_time = pygame.time.get_ticks()
         self.player.update(keys)
 
@@ -106,15 +107,14 @@ class Level:
             self.check_if_go_die()
             self.update_game_window()
             self.info.update(surface)
-            self.brick_group.update()
             self.crate_group.update()
-
             self.enemy_group.update(self)
+            self.dying_group.update(self)
 
         self.draw(surface)
 
     def update_player_position(self):
-        #x direction
+        # x direction
         self.player.rect.x += self.player.x_vel
         if self.player.rect.x < self.start_x:
             self.player.rect.x = self.start_x
@@ -122,17 +122,25 @@ class Level:
             self.player.rect.right = self.end_x
         self.check_x_collision()
 
-        #y direction
+        # y direction
         self.player.rect.y += self.player.y_vel
         self.check_y_collision()
 
     def check_x_collision(self):
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
-        tools.sprite_group_add(check_group,self.crate_group)
+        tools.sprite_group_add(check_group, self.crate_group)
         ground_item = pygame.sprite.spritecollideany(self.player, check_group)
         if ground_item:
             self.adjust_player_x(ground_item)
 
+        enemy = pygame.sprite.spritecollideany(self.player, self.enemy_group)
+        if enemy:
+            self.enemy_group.remove(enemy)
+            self.dying_group.add(enemy)
+            if self.player.span:
+                enemy.go_die('span')
+            else:
+                self.player.go_die()
 
     def check_y_collision(self):
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
@@ -142,12 +150,32 @@ class Level:
             self.adjust_player_y(ground_item)
         self.check_will_fall(self.player)
 
+        enemy = pygame.sprite.spritecollideany(self.player, self.enemy_group)
+        if enemy:
+            self.enemy_group.remove(enemy)
+            self.dying_group.add(enemy)
+            if self.player.span == True:
+                how = 'span'
+            elif self.player.y_vel >= 0:
+                if enemy.name == 'turtle':
+                    how = 'trampled'
+                    self.player.state = 'jump'
+                    self.player.rect.bottom = enemy.rect.top
+                    self.player.y_vel = self.player.jump_vel * 1.2
+                    enemy.x_vel *= -1
+                    enemy.direction = 1 if enemy.direction == 0 else 0
+                elif enemy.name == 'flyingfish':
+                    self.player.die()
+                    how = 'trampled'
+            enemy.go_die(how)
+
     def adjust_player_x(self, sprite):
         if self.player.rect.x < sprite.rect.x:
             self.player.rect.right = sprite.rect.left
         else:
             self.player.rect.left = sprite.rect.right
         self.player.x_vel = 0
+
     #
     def adjust_player_y(self, sprite):
         # downwords
@@ -160,6 +188,7 @@ class Level:
             self.player.y_vel = 7
             self.player.rect.top = sprite.rect.bottom
             self.player.state = 'fall'
+
     #
     def check_will_fall(self, sprite):
         sprite.rect.y += 1
@@ -175,15 +204,14 @@ class Level:
         if self.player.x_vel > 0 and self.player.rect.centerx > half and self.game_window.right < self.end_x:
             self.game_window.x += self.player.x_vel
 
-
-    def draw(self,surface):
+    def draw(self, surface):
         self.game_ground.blit(self.background, self.game_window, self.game_window)
-        self.game_ground.blit(self.player.image,self.player.rect)
+        self.game_ground.blit(self.player.image, self.player.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
 
-        surface.blit(self.game_ground,(0,0),self.game_window)
+        surface.blit(self.game_ground, (0, 0), self.game_window)
         self.info.draw(surface)
 
     def check_checkpoints(self):
@@ -193,15 +221,12 @@ class Level:
                 self.enemy_group.add(self.enemy_group_dict[str(checkpoint.enemy_groupid)])
             checkpoint.kill()
 
-
     def check_if_go_die(self):
         if self.player.rect.y > C.SCREEN_H:
             self.player.go_die()
 
     def update_game_info(self):
         if self.player.dead:
-            self.game_info['bleed'] -= 1
-        if self.game_info['bleed'] == 0:
+            self.game_info['life'] -= 1
+        if self.game_info['life'] == 0:
             self.next = 'game_over'
-
-

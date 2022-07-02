@@ -7,7 +7,7 @@ class MainMenu:
     def __init__(self):
         game_info = {
             'fruit': 0,
-            'bleed': 100,
+            'life': 3,
         }
         self.start(game_info)
     def start(self, game_info):
@@ -63,8 +63,8 @@ class MainMenu:
         self.info.draw(surface)
 
     def reset_game_info(self):
-        self.game_info.update({
+        self.info.update({
             'fruit':0,
-            'bleed':100
+            'life': 3
         })
 
