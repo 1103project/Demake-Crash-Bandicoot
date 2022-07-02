@@ -1,6 +1,6 @@
 import pygame
 from .. import constants as C
-from . import fruit
+from .import fruit
 from .. import tools, setup
 pygame.font.init()
 
@@ -10,7 +10,7 @@ class Info:
         self.game_info = game_info
         self.create_state_labels()
         self.create_info_labels()
-        # self.fruit = fruit.Fruit()
+
 
     def create_state_labels(self):
         self.state_labels = []
@@ -19,9 +19,12 @@ class Info:
             self.state_labels.append((self.create_label('Quit Game',size=50), (190,550)))
 
 
+
         if self.state == 'game_over':
             self.state_labels.append((self.create_label('Game Over', size=50), (390, 320)))
-            pygame.mixer.music.stop()
+
+
+
 
 
 
@@ -40,6 +43,8 @@ class Info:
     def draw(self,surface):
         for label in self.state_labels:
             surface.blit(label[0], label[1])
-        surface.blit(tools.get_image(setup.GRAPHICS['bandicoot_fruit'], 155, 102, 34, 35, (0, 56, 222), 1.5), (900, 20))
+        surface.blit(self.create_label('*', size=50), (875, 35))
+        surface.blit(self.create_label(str(self.game_info['fruit']), size=50), (900, 30))
+        surface.blit(tools.get_image(setup.GRAPHICS['bandicoot_fruit'], 155, 102, 34, 35, (0, 56, 222), 1.5), (800, 20))
 
 

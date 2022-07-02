@@ -138,7 +138,7 @@ class Level:
         # y direction
         self.player.rect.y += self.player.y_vel
         self.check_y_collision()
-
+        self.check_fruit_collistion()
     def check_x_collision(self):
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
         tools.sprite_group_add(check_group, self.crate_group)
@@ -212,6 +212,15 @@ class Level:
         if not collided and sprite.state != 'jump':
             sprite.state = 'fall'
         sprite.rect.y -= 1
+
+    def check_fruit_collistion(self):
+        check_fruit_group = pygame.sprite.Group.copy(self.fruit_group)
+        fruit_collistion = pygame.sprite.spritecollideany(self.player, check_fruit_group)
+        if fruit_collistion:
+            self.game_info['fruit'] += 1
+            fruit_collistion.kill()
+
+
 
     def update_game_window(self):
         half = self.game_window.x + self.game_window.width / 2

@@ -64,7 +64,7 @@ class MainMenu:
 
     def reset_game_info(self):
         self.info.update({
-            'fruit':0,
+            'fruit': 0,
             'life': 3
         })
 
