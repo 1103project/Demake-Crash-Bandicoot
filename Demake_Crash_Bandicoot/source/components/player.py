@@ -90,6 +90,9 @@ class Player(pygame.sprite.Sprite):
             self.die()
         elif self.state == 'fall':
             self.fall(keys)
+        elif self.state == 'tp':
+            self.tp()
+
 
         if self.face_right:
             self.image = self.right_frames[self.frame_index]
@@ -193,6 +196,9 @@ class Player(pygame.sprite.Sprite):
         self.frames_index = 8
         self.state = 'die'
         self.death_timer = self.current_time
+
+    def tp(self):
+        pass
 
     def calc_vel(self, vel, accel, max_vel, is_positive=True):
         if is_positive:
