@@ -1,6 +1,7 @@
 import pygame
 from .. import constants as C
 from . import fruit
+from .. import tools, setup
 pygame.font.init()
 
 class Info:
@@ -9,22 +10,20 @@ class Info:
         self.game_info = game_info
         self.create_state_labels()
         self.create_info_labels()
-        self.fruit = fruit.Fruit()
+        # self.fruit = fruit.Fruit()
 
     def create_state_labels(self):
         self.state_labels = []
         if self.state == 'main_menu':
             self.state_labels.append((self.create_label('Start Game',size=50),(190,480)))
             self.state_labels.append((self.create_label('Quit Game',size=50), (190,550)))
-            pygame.mixer.music.load(
-                'D:\DevSidecar\clone\Demake-Crash-Bandicoot\Demake_Crash_Bandicoot\source\components\\bgm.mp3')
-            pygame.mixer.music.play(-1)
+
+
         if self.state == 'game_over':
             self.state_labels.append((self.create_label('Game Over', size=50), (390, 320)))
             pygame.mixer.music.stop()
-            pygame.mixer.music.load(
-                'D:\DevSidecar\clone\Demake-Crash-Bandicoot\Demake_Crash_Bandicoot\source\components\gom.mp3')
-            pygame.mixer.music.play(-1)
+
+
 
 
     def create_info_labels(self):
@@ -41,6 +40,6 @@ class Info:
     def draw(self,surface):
         for label in self.state_labels:
             surface.blit(label[0], label[1])
-        surface.blit(self.fruit.image, self.fruit.rect)
+        surface.blit(tools.get_image(setup.GRAPHICS['bandicoot_fruit'], 155, 102, 34, 35, (0, 56, 222), 1.5), (900, 20))
 
 

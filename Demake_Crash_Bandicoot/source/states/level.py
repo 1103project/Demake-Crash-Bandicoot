@@ -1,6 +1,6 @@
 from .. import setup, tools
 from ..components import info
-from ..components import player, stuff, brick, crate, enemy
+from ..components import player, stuff, brick, crate, enemy, fruit
 from .. import constants as C
 import pygame
 import json
@@ -21,6 +21,7 @@ class Level:
         self.setup_bricks_and_crates()
         self.setup_enemies()
         self.setup_checkpoints()
+        self.setup_fruit()
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -95,6 +96,14 @@ class Level:
             enemy_groupid = item.get('enemy_groupid')
             self.checkpoint_group.add(stuff.Checkpoint(x, y, w, h, checkpoint_type, enemy_groupid))
 
+
+    def setup_fruit(self):
+        self.fruit_group = pygame.sprite.Group()
+        if 'fruit' in self.map_data:
+            for fruit_data in self.map_data['fruit']:
+                x, y = fruit_data['x'], fruit_data['y']
+                self.fruit_group.add(fruit.Fruit(x, y))
+
     def update(self, surface, keys):
         self.current_time = pygame.time.get_ticks()
         self.player.update(keys)
@@ -112,6 +121,8 @@ class Level:
             self.crate_group.update()
             self.enemy_group.update(self)
             self.dying_group.update(self)
+            self.fruit_group.update(self)
+
 
         self.draw(surface)
 
@@ -171,6 +182,7 @@ class Level:
                     how = 'trampled'
             enemy.go_die(how)
 
+
     def adjust_player_x(self, sprite):
         if self.player.rect.x < sprite.rect.x:
             self.player.rect.right = sprite.rect.left
@@ -212,6 +224,7 @@ class Level:
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
+        self.fruit_group.draw(self.game_ground)
 
         surface.blit(self.game_ground, (0, 0), self.game_window)
         self.info.draw(surface)
