@@ -9,7 +9,7 @@ def create_enemy(enemy_data):
     if enemy_type == 0:
         enemy = Turtle(x, y_bottom, direction, "turtle")
     elif enemy_type == 1:
-        enemy = Flyingfish(x, y_bottom, direction, "flyingfish")
+        enemy = Flyingfish(x, y_bottom, direction, "fish")
     elif enemy_type == 2:
         enemy = Slim(x, y_bottom, direction, "slim")
 
@@ -108,13 +108,13 @@ class Turtle(Enemy):
 
 class Flyingfish(Enemy):
     def __init__(self, x, y_bottom, direction, name):
-        frame_rects = [()]
+        frame_rects = [(118, 89, 35, 54), (153, 89, 35, 54)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
 
 
 
 class Slim(Enemy):
     def __init__(self, x, y_bottom, direction, name):
-        frame_rects = [()]
+        frame_rects = [(114, 53, 73, 93), (0, 0, 5, 5)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
 
