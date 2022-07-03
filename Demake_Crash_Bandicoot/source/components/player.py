@@ -152,12 +152,16 @@ class Player(pygame.sprite.Sprite):
             self.state = 'stand'
 
     def jump(self, keys):
-        # kick_sound = pygame.mixer.Sound('../../resourses/music/death.wav')
-        # kick_sound.set_volume(0.2)
+
+        jump_sound = pygame.mixer.Sound("resourses/music/small_jump.ogg")
+        jump_sound.set_volume(0.5)
+        jump_sound.play()
+
+
+
         self.frame_index = 4
         self.y_vel += self.anti_gravity
         self.can_jump = False
-        # kick_sound.play()
 
         if self.y_vel != 0:
             self.state = 'fall'
@@ -195,6 +199,10 @@ class Player(pygame.sprite.Sprite):
         self.y_vel += self.anti_gravity
 
     def go_die(self):
+        pygame.mixer.music.load('resourses/music/death.wav')
+        pygame.mixer.music.play()
+
+
         self.dead = True
         self.y_vel = self.jump_vel
         self.frames_index = 8
@@ -211,6 +219,10 @@ class Player(pygame.sprite.Sprite):
             return max(vel - accel, -max_vel)
 
     def span_attack(self):
+        j_sound = pygame.mixer.Sound("resourses/music/kick.ogg")
+        j_sound.set_volume(0.5)
+        j_sound.play()
+
         self.span = True
         self.span_timer = pygame.time.get_ticks()
 
