@@ -148,24 +148,33 @@ class Level:
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
         if cratecollide:
+            if cratecollide.crate_type == 0:
+                pass
+
+            if cratecollide.crate_type == 1:
+                pass
+
             if cratecollide.crate_type == 2:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
                     self.game_info['fruit'] += 1
                     self.game_info['life_append'] += 1
+
             if cratecollide.crate_type == 3:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 4:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
+                    self.game_info['life'] += 1
+
+            if cratecollide.crate_type == 6:
+                pass
+
             if cratecollide.crate_type == 7:
-                if self.player.span == True:
-                    self.player.go_die()
-            if cratecollide.crate_type == 8:
                 if self.player.span == True:
                     self.player.go_die()
             self.adjust_player_x(cratecollide)
@@ -196,6 +205,9 @@ class Level:
 
 
         if cratecollide :
+            if cratecollide.crate_type == 0:
+                pass
+
             if cratecollide.crate_type == 1:
                 self.game_info['arrow'] = 1
 
@@ -204,21 +216,29 @@ class Level:
                     self.crate_group.remove(cratecollide)
                     self.game_info['fruit'] += 1
                     self.game_info['life_append'] += 1
+
             if cratecollide.crate_type == 3:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
+                    self.game_info['fruit'] += 10
+                    self.game_info['life'] += 1
+
             if cratecollide.crate_type == 4:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
+                    self.game_info['life'] += 1
+
+            if cratecollide.crate_type == 6:
+                pass
+
+
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
                     self.player.go_die()
-            if cratecollide.crate_type == 8:
-                if self.player.span == True:
-                    self.player.go_die()
+
             self.adjust_player_y(cratecollide)
 
 
