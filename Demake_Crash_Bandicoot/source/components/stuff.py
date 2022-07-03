@@ -1,7 +1,7 @@
 import pygame
 from .. import tools,setup
 from .. import constants as C
-
+from . import info
 class Item(pygame.sprite.Sprite):
     def __init__(self, x, y, w, h, name):
         pygame.sprite.Sprite.__init__(self)
@@ -22,7 +22,8 @@ class Mask(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.load_image()
-        self.level = 1
+
+        # self.level = 1
 
     def load_image(self):
         sheet = setup.GRAPHICS['aku_aku']
@@ -41,3 +42,7 @@ class Mask(pygame.sprite.Sprite):
         self.frames = self.right_frames
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_rect()
+
+
+
+

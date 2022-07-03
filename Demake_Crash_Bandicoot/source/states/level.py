@@ -185,7 +185,7 @@ class Level:
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
                     if self.check_mask_level():
-                        self.mask.level -= 1
+                        self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
                     else:
                         self.player.go_die()
@@ -210,7 +210,7 @@ class Level:
                 enemy.go_die('span')
             else:
                 if self.check_mask_level():
-                    self.mask.level -= 1
+                    self.game_info['mask_level'] -= 1
                     if self.player.face_right == True:
                         self.player.rect.left -= 30
                     elif self.player.face_right == False:
@@ -238,10 +238,9 @@ class Level:
                     self.game_info['life_append'] += 1
 
             if cratecollide.crate_type == 3:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
-                    self.game_info['fruit'] += 10
-                    self.game_info['life'] += 1
+                self.crate_group.remove(cratecollide)
+                self.game_info['fruit'] += 10
+                self.game_info['life'] += 1
 
             if cratecollide.crate_type == 4:
                 pass
@@ -258,7 +257,7 @@ class Level:
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
                     if self.check_mask_level():
-                        self.mask.level -= 1
+                        self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
                     else:
                         self.player.go_die()
@@ -293,7 +292,7 @@ class Level:
                     enemy.direction = 1 if enemy.direction == 0 else 0
                 elif enemy.name == 'flyingfish':
                     if self.check_mask_level():
-                        self.mask.level -= 1
+                        self.game_info['mask_level'] -= 1
                         self.player.rect.bottom -= 30
                     else:
                         self.player.go_die()
@@ -392,8 +391,17 @@ class Level:
             checkpoint.kill()
 
     def check_if_go_die(self):
-        if self.player.rect.y > C.SCREEN_H:
-            self.player.go_die()
+        if self.game_info['mask_level'] == 0:
+            if self.player.rect.y > C.SCREEN_H:
+                self.player.go_die()
+        else:
+            if self.player.rect.y > C.SCREEN_H:
+                self.game_info['mask_level'] -= 1
+                self.player.rect.bottom = 336
+                if self.player.face_right == True:
+                    self.player.rect.right -= 200
+                if self.player.face_right == False:
+                    self.player.rect.left += 200
 
     def update_game_info(self):
         if self.player.dead:
@@ -425,7 +433,7 @@ class Level:
             self.game_info['arrow'] = 0
 
     def check_mask_level(self):
-        if self.mask.level == 0:
+        if self.game_info['mask_level'] == 0:
             return False
         else:
             return True

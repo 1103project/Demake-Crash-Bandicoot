@@ -186,7 +186,7 @@ class Player(pygame.sprite.Sprite):
             self.span_attack()
             self.span_attack_check()
 
-    def die(self,level):
+    def die(self):
         self.rect.y += self.y_vel
         self.y_vel += self.anti_gravity
 
