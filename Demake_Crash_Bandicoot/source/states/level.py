@@ -22,6 +22,7 @@ class Level:
         self.setup_enemies()
         self.setup_checkpoints()
         self.setup_fruit()
+        self.setup_mask()
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -104,6 +105,11 @@ class Level:
                 x, y = fruit_data['x'], fruit_data['y']
                 self.fruit_group.add(fruit.Fruit(x, y))
 
+    def setup_mask(self):
+        self.mask = stuff.Mask()  # 设置角色
+        self.mask.rect.x = self.player_x - 35
+        self.mask.rect.bottom = 520
+
     def update(self, surface, keys):
         self.current_time = pygame.time.get_ticks()
         self.player.update(keys)
@@ -135,9 +141,11 @@ class Level:
         elif self.player.rect.right > self.end_x:
             self.player.rect.right = self.end_x
         self.check_x_collision()
+        self.mask.rect.x += self.player.x_vel
 
         # y direction
         self.player.rect.y += self.player.y_vel
+        self.mask.rect.y = self.player.rect.y
         self.check_y_collision()
         self.check_fruit_collistion()
         self.check_if_on_ice()
@@ -339,12 +347,6 @@ class Level:
             self.game_info['life_append'] = 0
 
 
-
-
-
-
-
-
     def update_game_window(self):
         half = self.game_window.x + self.game_window.width / 2
         if self.player.x_vel > 0 and self.player.rect.centerx > half and self.game_window.right < self.end_x:
@@ -353,6 +355,7 @@ class Level:
     def draw(self, surface):
         self.game_ground.blit(self.background, self.game_window, self.game_window)
         self.game_ground.blit(self.player.image, self.player.rect)
+        self.game_ground.blit(self.mask.image, self.mask.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
