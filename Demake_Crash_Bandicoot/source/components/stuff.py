@@ -22,6 +22,7 @@ class Mask(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.load_image()
+        self.level = 1
 
     def load_image(self):
         sheet = setup.GRAPHICS['aku_aku']

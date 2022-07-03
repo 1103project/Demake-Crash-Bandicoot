@@ -184,7 +184,12 @@ class Level:
 
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
-                    self.player.go_die()
+                    if self.check_mask_level():
+                        self.mask.level -= 1
+                        self.crate_group.remove(cratecollide)
+                    else:
+                        self.player.go_die()
+
             self.adjust_player_x(cratecollide)
 
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
@@ -204,7 +209,14 @@ class Level:
             if self.player.span:
                 enemy.go_die('span')
             else:
-                self.player.go_die()
+                if self.check_mask_level():
+                    self.mask.level -= 1
+                    if self.player.face_right == True:
+                        self.player.rect.left -= 30
+                    elif self.player.face_right == False:
+                        self.player.rect.right += 30
+                else:
+                    self.player.go_die()
 
     def check_y_collision(self):
 
@@ -245,7 +257,11 @@ class Level:
 
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
-                    self.player.go_die()
+                    if self.check_mask_level():
+                        self.mask.level -= 1
+                        self.crate_group.remove(cratecollide)
+                    else:
+                        self.player.go_die()
 
             self.adjust_player_y(cratecollide)
 
@@ -276,7 +292,11 @@ class Level:
                     enemy.x_vel *= -1
                     enemy.direction = 1 if enemy.direction == 0 else 0
                 elif enemy.name == 'flyingfish':
-                    self.player.die()
+                    if self.check_mask_level():
+                        self.mask.level -= 1
+                        self.player.rect.bottom -= 30
+                    else:
+                        self.player.go_die()
                     how = 'trampled'
             enemy.go_die(how)
 
@@ -382,8 +402,6 @@ class Level:
             self.next = 'game_over'
 
     def check_crate(self, cratecollide):
-
-
         if cratecollide and self.player.span == True:
             if cratecollide.crate_type == 1:
 
@@ -405,5 +423,11 @@ class Level:
         if self.game_info['arrow'] == 1 and self.player.state == 'jump':
             self.player.rect.y -= 170
             self.game_info['arrow'] = 0
+
+    def check_mask_level(self):
+        if self.mask.level == 0:
+            return False
+        else:
+            return True
 
 
