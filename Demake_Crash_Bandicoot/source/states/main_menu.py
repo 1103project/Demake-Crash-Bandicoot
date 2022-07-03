@@ -1,7 +1,7 @@
 import pygame
 from .. import setup
 from .. import tools
-from ..components import info
+from ..components import info, stuff
 
 class MainMenu:
     def __init__(self):
@@ -9,7 +9,8 @@ class MainMenu:
             'fruit': 0,
             'life': 3,
             'life_append': 0,
-            'arrow': 0
+            'arrow': 0,
+            'mask_level':1
         }
         self.start(game_info)
     def start(self, game_info):
@@ -69,6 +70,7 @@ class MainMenu:
             'fruit': 0,
             'life': 3,
             'life_append': 0,
-            'arrow': 0
+            'arrow': 0,
+            'mask_level':1
         })
 

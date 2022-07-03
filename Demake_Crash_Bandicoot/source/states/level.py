@@ -22,6 +22,7 @@ class Level:
         self.setup_enemies()
         self.setup_checkpoints()
         self.setup_fruit()
+        self.setup_mask()
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -104,6 +105,11 @@ class Level:
                 x, y = fruit_data['x'], fruit_data['y']
                 self.fruit_group.add(fruit.Fruit(x, y))
 
+    def setup_mask(self):
+        self.mask = stuff.Mask()  # 设置角色
+        self.mask.rect.x = self.player_x - 35
+        self.mask.rect.bottom = 520
+
     def update(self, surface, keys):
         self.current_time = pygame.time.get_ticks()
         self.player.update(keys)
@@ -135,9 +141,11 @@ class Level:
         elif self.player.rect.right > self.end_x:
             self.player.rect.right = self.end_x
         self.check_x_collision()
+        self.mask.rect.x += self.player.x_vel
 
         # y direction
         self.player.rect.y += self.player.y_vel
+        self.mask.rect.y = self.player.rect.y
         self.check_y_collision()
         self.check_fruit_collistion()
         self.check_if_on_ice()
@@ -148,26 +156,40 @@ class Level:
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
         if cratecollide:
+            if cratecollide.crate_type == 0:
+                pass
+
+            if cratecollide.crate_type == 1:
+                pass
+
             if cratecollide.crate_type == 2:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
                     self.game_info['fruit'] += 1
                     self.game_info['life_append'] += 1
+
             if cratecollide.crate_type == 3:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 4:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
+                    self.game_info['life'] += 1
+
+            if cratecollide.crate_type == 6:
+                pass
+
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
-                    self.player.go_die()
-            if cratecollide.crate_type == 8:
-                if self.player.span == True:
-                    self.player.go_die()
+                    if self.check_mask_level():
+                        self.game_info['mask_level'] -= 1
+                        self.crate_group.remove(cratecollide)
+                    else:
+                        self.player.go_die()
+
             self.adjust_player_x(cratecollide)
 
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
@@ -187,7 +209,14 @@ class Level:
             if self.player.span:
                 enemy.go_die('span')
             else:
-                self.player.go_die()
+                if self.check_mask_level():
+                    self.game_info['mask_level'] -= 1
+                    if self.player.face_right == True:
+                        self.player.rect.left -= 30
+                    elif self.player.face_right == False:
+                        self.player.rect.right += 30
+                else:
+                    self.player.go_die()
 
     def check_y_collision(self):
 
@@ -196,6 +225,9 @@ class Level:
 
 
         if cratecollide :
+            if cratecollide.crate_type == 0:
+                pass
+
             if cratecollide.crate_type == 1:
                 self.game_info['arrow'] = 1
 
@@ -204,21 +236,32 @@ class Level:
                     self.crate_group.remove(cratecollide)
                     self.game_info['fruit'] += 1
                     self.game_info['life_append'] += 1
+
             if cratecollide.crate_type == 3:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                self.crate_group.remove(cratecollide)
+                self.game_info['fruit'] += 10
+                self.game_info['life'] += 1
+
             if cratecollide.crate_type == 4:
-                if self.player.span == True:
-                    self.crate_group.remove(cratecollide)
+                pass
+
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
                     self.crate_group.remove(cratecollide)
+                    self.game_info['life'] += 1
+
+            if cratecollide.crate_type == 6:
+                pass
+
+
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
-                    self.player.go_die()
-            if cratecollide.crate_type == 8:
-                if self.player.span == True:
-                    self.player.go_die()
+                    if self.check_mask_level():
+                        self.game_info['mask_level'] -= 1
+                        self.crate_group.remove(cratecollide)
+                    else:
+                        self.player.go_die()
+
             self.adjust_player_y(cratecollide)
 
 
@@ -248,7 +291,11 @@ class Level:
                     enemy.x_vel *= -1
                     enemy.direction = 1 if enemy.direction == 0 else 0
                 elif enemy.name == 'flyingfish':
-                    self.player.die()
+                    if self.check_mask_level():
+                        self.game_info['mask_level'] -= 1
+                        self.player.rect.bottom -= 30
+                    else:
+                        self.player.go_die()
                     how = 'trampled'
             enemy.go_die(how)
 
@@ -319,12 +366,6 @@ class Level:
             self.game_info['life_append'] = 0
 
 
-
-
-
-
-
-
     def update_game_window(self):
         half = self.game_window.x + self.game_window.width / 2
         if self.player.x_vel > 0 and self.player.rect.centerx > half and self.game_window.right < self.end_x:
@@ -333,6 +374,7 @@ class Level:
     def draw(self, surface):
         self.game_ground.blit(self.background, self.game_window, self.game_window)
         self.game_ground.blit(self.player.image, self.player.rect)
+        self.game_ground.blit(self.mask.image, self.mask.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
@@ -349,8 +391,17 @@ class Level:
             checkpoint.kill()
 
     def check_if_go_die(self):
-        if self.player.rect.y > C.SCREEN_H:
-            self.player.go_die()
+        if self.game_info['mask_level'] == 0:
+            if self.player.rect.y > C.SCREEN_H:
+                self.player.go_die()
+        else:
+            if self.player.rect.y > C.SCREEN_H:
+                self.game_info['mask_level'] -= 1
+                self.player.rect.bottom = 336
+                if self.player.face_right == True:
+                    self.player.rect.right -= 200
+                if self.player.face_right == False:
+                    self.player.rect.left += 200
 
     def update_game_info(self):
         if self.player.dead:
@@ -359,8 +410,6 @@ class Level:
             self.next = 'game_over'
 
     def check_crate(self, cratecollide):
-
-
         if cratecollide and self.player.span == True:
             if cratecollide.crate_type == 1:
 
@@ -380,7 +429,13 @@ class Level:
 
     def jump_strengthen(self):
         if self.game_info['arrow'] == 1 and self.player.state == 'jump':
-            self.player.rect.y -= 100
+            self.player.rect.y -= 170
             self.game_info['arrow'] = 0
+
+    def check_mask_level(self):
+        if self.game_info['mask_level'] == 0:
+            return False
+        else:
+            return True
 
 
