@@ -152,16 +152,18 @@ class Player(pygame.sprite.Sprite):
             self.state = 'stand'
 
     def jump(self, keys):
+        kick_sound = pygame.mixer.Sound("../../resourses/music/kick.ogg")
+        kick_sound.set_volume(0.2)
         self.frame_index = 4
         self.y_vel += self.anti_gravity
         self.can_jump = False
         if self.y_vel != 0:
             self.state = 'fall'
-
         if keys[pygame.K_d]:
             # self.x_vel = 10
             self.face_right = True
             self.x_vel = self.calc_vel(self.x_vel, self.x_accel, self.max_x_vel, True)
+
         elif keys[pygame.K_a]:
             # self.x_vel = -10
             self.face_right = False
