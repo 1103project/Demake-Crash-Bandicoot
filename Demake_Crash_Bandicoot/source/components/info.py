@@ -47,7 +47,7 @@ class Info:
         surface.blit(self.create_label(str(self.game_info['fruit']), size=50), (900, 30))
         surface.blit(self.create_label('life:', size=50), (20, 35))
         surface.blit(self.create_label(str(self.game_info['life']), size=50), (90, 35))
-        surface.blit(self.create_label(str(self.game_info['arrow']), size=100), (200, 30))
+        # surface.blit(self.create_label(str(self.game_info['arrow']), size=100), (200, 30))
 
 
         surface.blit(tools.get_image(setup.GRAPHICS['bandicoot_fruit'], 155, 102, 34, 35, (0, 56, 222), 1.5), (800, 20))

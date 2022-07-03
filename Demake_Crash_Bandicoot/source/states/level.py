@@ -403,7 +403,7 @@ class Level:
 
     def jump_strengthen(self):
         if self.game_info['arrow'] == 1 and self.player.state == 'jump':
-            self.player.rect.y -= 100
+            self.player.rect.y -= 170
             self.game_info['arrow'] = 0
 
 
