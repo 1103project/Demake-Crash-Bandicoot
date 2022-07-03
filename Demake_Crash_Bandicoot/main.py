@@ -6,11 +6,10 @@ from source.states import main_menu, load_screen, level
 def main():
 
     #bgm
-    pygame.init()
-    pygame.font.init()
-    pygame.mixer.init()
     pygame.mixer.music.load('resourses/music/main_theme_sped_up.ogg')
     pygame.mixer.music.play(-1)
+
+
 
 
     state_dict = {
