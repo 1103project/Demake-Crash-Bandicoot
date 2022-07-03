@@ -52,7 +52,7 @@ class Level:
 
     def setup_ground_items(self):
         self.ground_items_group = pygame.sprite.Group()
-        for name in ['ground']:
+        for name in ['ground', 'ice']:
             for item in self.map_data[name]:
                 self.ground_items_group.add(stuff.Item(item['x'], item['y'], item['width'], item['height'], name))
 
@@ -122,7 +122,8 @@ class Level:
             self.enemy_group.update(self)
             self.dying_group.update(self)
             self.fruit_group.update(self)
-
+            self.life_fruit_append()
+            self.jump_strengthen()
 
         self.draw(surface)
 
@@ -139,12 +140,45 @@ class Level:
         self.player.rect.y += self.player.y_vel
         self.check_y_collision()
         self.check_fruit_collistion()
+        self.check_if_on_ice()
+        # self.life_fruit_append()
+
+
     def check_x_collision(self):
+        checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
+        cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
+        if cratecollide:
+            if cratecollide.crate_type == 2:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+                    self.game_info['fruit'] += 1
+                    self.game_info['life_append'] += 1
+            if cratecollide.crate_type == 3:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 4:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 5:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 7:
+                if self.player.span == True:
+                    self.player.go_die()
+            if cratecollide.crate_type == 8:
+                if self.player.span == True:
+                    self.player.go_die()
+            self.adjust_player_x(cratecollide)
+
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
-        tools.sprite_group_add(check_group, self.crate_group)
+
+        # tools.sprite_group_add(check_group, self.crate_group)
         ground_item = pygame.sprite.spritecollideany(self.player, check_group)
-        if ground_item:
+        if ground_item and ground_item.name == 'ground':
             self.adjust_player_x(ground_item)
+        elif ground_item and ground_item.name == 'ice':
+            self.player_tp(ground_item)
+
 
         enemy = pygame.sprite.spritecollideany(self.player, self.enemy_group)
         if enemy:
@@ -156,13 +190,49 @@ class Level:
                 self.player.go_die()
 
     def check_y_collision(self):
-        check_group = pygame.sprite.Group.copy(self.ground_items_group)
-        tools.sprite_group_add(check_group, self.crate_group)
-        ground_item = pygame.sprite.spritecollideany(self.player, check_group)
-        if ground_item:
-            self.adjust_player_y(ground_item)
-        self.check_will_fall(self.player)
 
+        checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
+        cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
+
+
+        if cratecollide :
+            if cratecollide.crate_type == 1:
+                self.game_info['arrow'] = 1
+
+            if cratecollide.crate_type == 2:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+                    self.game_info['fruit'] += 1
+                    self.game_info['life_append'] += 1
+            if cratecollide.crate_type == 3:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 4:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 5:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 7:
+                if self.player.span == True:
+                    self.player.go_die()
+            if cratecollide.crate_type == 8:
+                if self.player.span == True:
+                    self.player.go_die()
+            self.adjust_player_y(cratecollide)
+
+
+        check_group = pygame.sprite.Group.copy(self.ground_items_group)
+        # tools.sprite_group_add(check_group, self.crate_group)
+        ground_item = pygame.sprite.spritecollideany(self.player, check_group)
+
+        if ground_item and ground_item.name == 'ground':
+            self.adjust_player_y(ground_item)
+        elif ground_item and ground_item.name == 'ice':
+            self.adjust_player_y(ground_item)
+            self.player_tp(ground_item)
+
+        self.check_will_fall(self.player)
         enemy = pygame.sprite.spritecollideany(self.player, self.enemy_group)
         if enemy:
             self.enemy_group.remove(enemy)
@@ -190,7 +260,29 @@ class Level:
             self.player.rect.left = sprite.rect.right
         self.player.x_vel = 0
 
-    #
+
+    def player_tp(self, sprite):
+
+        if self.player.face_right == True:
+            if self.player.rect.x < sprite.rect.right:
+                self.player.rect.x += 50
+
+        if self.player.face_right == False:
+            if self.player.rect.right > sprite.rect.left:
+                self.player.rect.x -= 50
+        self.player.state = 'tp'
+
+
+    def check_if_on_ice(self):
+
+        if  self.player.face_right == True:
+            if self.player.rect.left > 4720 and self.player.rect.right < 4770:
+                self.player.state = 'walk'
+        if self.player.face_right == False:
+            if self.player.rect.right < 4225 and self.player.rect.left > 4175:
+                self.player.state = 'walk'
+
+
     def adjust_player_y(self, sprite):
         # downwords
         if self.player.rect.bottom < sprite.rect.bottom:
@@ -218,7 +310,18 @@ class Level:
         fruit_collistion = pygame.sprite.spritecollideany(self.player, check_fruit_group)
         if fruit_collistion:
             self.game_info['fruit'] += 1
+            self.game_info['life_append'] += 1
             fruit_collistion.kill()
+
+    def life_fruit_append(self):
+        if self.game_info['life_append'] != 0 and self.game_info['life_append'] % 10 == 0:
+            self.game_info['life'] += 1
+            self.game_info['life_append'] = 0
+
+
+
+
+
 
 
 
@@ -254,3 +357,30 @@ class Level:
             self.game_info['life'] -= 1
         if self.game_info['life'] == 0:
             self.next = 'game_over'
+
+    def check_crate(self, cratecollide):
+
+
+        if cratecollide and self.player.span == True:
+            if cratecollide.crate_type == 1:
+
+                self.game_info['arrow'] = 1
+            if cratecollide.crate_type == 2:
+                self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 3:
+                self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 4:
+                self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 5:
+                self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 7:
+                self.player.go_die()
+            if cratecollide.crate_type == 8:
+                self.player.go_die()
+
+    def jump_strengthen(self):
+        if self.game_info['arrow'] == 1 and self.player.state == 'jump':
+            self.player.rect.y -= 100
+            self.game_info['arrow'] = 0
+
+
