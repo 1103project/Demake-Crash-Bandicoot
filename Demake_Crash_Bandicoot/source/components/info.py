@@ -45,11 +45,11 @@ class Info:
         for label in self.state_labels:
             surface.blit(label[0], label[1])
         surface.blit(self.create_label('*', size=50), (875, 35))
-        surface.blit(self.create_label(str(self.game_info['fruit']), size=50), (900, 30))
+        surface.blit(self.create_label("{}".format(self.game_info['fruit']), size=50), (900, 30))
         surface.blit(self.create_label('life:', size=50), (20, 35))
-        surface.blit(self.create_label(str(self.game_info['life']), size=50), (90, 35))
+        surface.blit(self.create_label("{}".format(self.game_info['life']), size=50), (90, 35))
         surface.blit(self.create_label('Aku Aku:', size=50), (150, 35)),
-        surface.blit(self.create_label(str(self.game_info['mask_level']), size=50), (360, 35))
+        surface.blit(self.create_label("{}".format(self.game_info['mask_level']), size=50), (360, 35))
 
 
 

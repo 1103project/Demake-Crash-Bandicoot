@@ -61,19 +61,16 @@ class TntExplode(pygame.sprite.Sprite):
 
     def load_image(self):
         sheet = setup.GRAPHICS['crate_all']
-        self.frame_rects = [(148, 66, 24, 52)]
-        self.right_frames = []
-        self.left_frames = []
+        self.frame_rects = [(76, 159, 42, 41),(118, 159, 42, 41), (160, 159, 42, 41)]
+        self.frames = []
 
         for frame_rect in self.frame_rects:
-            right_image = tools.get_image(sheet, *frame_rect, C.RGB, 1.3)
-            left_image = pygame.transform.flip(right_image, True, False)
+            self.frames.append(tools.get_image(sheet, *frame_rect, C.RGB, 1))
 
-            self.right_frames.append(right_image)
-            self.left_frames.append(left_image)
+        self.frame_rects.append((40,80,93,62))
+        self.frames.append(tools.get_image(setup.GRAPHICS['crate_explode'],40,80,93,62,C.RGB,1))
 
         self.frame_index = 0
-        self.frames = self.right_frames
         self.image = self.frames[self.frame_index]
         self.rect = self.image.get_rect()
 

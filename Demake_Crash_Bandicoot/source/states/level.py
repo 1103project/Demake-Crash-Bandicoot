@@ -25,14 +25,24 @@ class Level:
         self.setup_mask()
         self.setup_timer()
         self.setup_explode_sprite()
+        self.setup_tntexplode_sprite()
 
     def setup_explode_sprite(self):
         self.explode = stuff.Explode()
         self.explode.rect.x = 1000
         self.explode.rect.bottom = 546
 
+    def setup_tntexplode_sprite(self):
+        self.tntexplode = stuff.TntExplode()
+        self.tntexplode.rect.x = 2250
+        self.tntexplode.rect.y = 302
+
+
     def setup_timer(self):
         self.nirto_timer = 0
+        self.tnt_timer = 0
+        self.tnt_flag = -1
+        self.tnt_flag2 = 1
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -133,6 +143,7 @@ class Level:
             self.check_checkpoints()
             self.check_if_go_die()
             self.check_nirto()
+            self.check_tnt()
             self.update_game_window()
             self.info.update(surface)
             self.crate_group.update()
@@ -164,6 +175,21 @@ class Level:
 
 
     def check_x_collision(self):
+        if self.tnt_flag2:
+            checktnt_group = pygame.sprite.Group(self.tntexplode)
+            tntcollide = pygame.sprite.spritecollideany(self.player, checktnt_group)
+            if tntcollide and self.tnt_flag != -1:
+                if tntcollide.image == tntcollide.frames[3] and self.tnt_timer < 3030:
+                    self.tnt_flag2 = 0
+                    if self.check_mask_level():
+                        self.game_info['mask_level'] -= 1
+                        checktnt_group.empty()
+                    else:
+                        self.player.go_die()
+                        checktnt_group.empty()
+                else:
+                    self.adjust_player_x(tntcollide)
+
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
         if cratecollide:
@@ -183,7 +209,14 @@ class Level:
                 pass
 
             if cratecollide.crate_type == 4:
-                pass
+                if self.player.span == True:
+                    if self.check_mask_level():
+                        self.game_info['mask_level'] -= 1
+                        self.crate_group.remove(cratecollide)
+                        self.tnt_timer = pygame.time.get_ticks()
+                        self.tnt_flag = 0
+                    else:
+                        self.player.go_die()
 
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
@@ -199,7 +232,7 @@ class Level:
                         self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
                         self.nirto_timer = pygame.time.get_ticks()
-                        self.game_ground.blit(self.explode.image, self.explode.rect)
+                        # self.game_ground.blit(self.explode.image, self.explode.rect)
                     else:
                         self.player.go_die()
 
@@ -226,16 +259,27 @@ class Level:
                     self.game_info['mask_level'] -= 1
                     if self.player.face_right == True:
                         self.player.rect.left -= 30
+                        self.mask.rect.left -= 30
                     elif self.player.face_right == False:
+                        self.player.rect.right += 30
                         self.player.rect.right += 30
                 else:
                     self.player.go_die()
 
     def check_y_collision(self):
+        # checktnt_group = pygame.sprite.Group(self.tntexplode)
+        # tntcollide = pygame.sprite.spritecollideany(self.player, checktnt_group)
+        # if tntcollide and self.tnt_flag != -1:
+        #     if tntcollide.image == tntcollide.frames[3]:
+        #         if self.check_mask_level():
+        #             self.game_info['mask_level'] -= 1
+        #         else:
+        #             self.player.go_die()
+        #     else:
+        #         self.adjust_player_y(tntcollide)
 
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
-
 
         if cratecollide :
             if cratecollide.crate_type == 0:
@@ -258,7 +302,9 @@ class Level:
                 self.game_info['life'] += 1
 
             if cratecollide.crate_type == 4:
-                pass
+                self.crate_group.remove(cratecollide)
+                self.tnt_timer = pygame.time.get_ticks()
+                self.tnt_flag = 1
 
             if cratecollide.crate_type == 5:
                 if self.player.span == True:
@@ -273,7 +319,7 @@ class Level:
                     if self.check_mask_level():
                         self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
-
+                        self.nirto_timer = pygame.time.get_ticks()
                     else:
                         self.player.go_die()
 
@@ -309,6 +355,7 @@ class Level:
                     if self.check_mask_level():
                         self.game_info['mask_level'] -= 1
                         self.player.rect.bottom -= 30
+                        self.mask.rect.bottom -= 30
                     else:
                         self.player.go_die()
                     how = 'trampled'
@@ -328,12 +375,13 @@ class Level:
         if self.player.face_right == True:
             if self.player.rect.x < sprite.rect.right:
                 self.player.rect.x += 50
+                self.mask.rect.x += 50
 
         if self.player.face_right == False:
             if self.player.rect.right > sprite.rect.left:
                 self.player.rect.x -= 50
+                self.player.rect.x -= 50
         self.player.state = 'tp'
-
 
     def check_if_on_ice(self):
 
@@ -343,7 +391,6 @@ class Level:
         if self.player.face_right == False:
             if self.player.rect.right < 4225 and self.player.rect.left > 4175:
                 self.player.state = 'walk'
-
 
     def adjust_player_y(self, sprite):
         # downwords
@@ -357,7 +404,7 @@ class Level:
             self.player.rect.top = sprite.rect.bottom
             self.player.state = 'fall'
 
-    #
+
     def check_will_fall(self, sprite):
         sprite.rect.y += 1
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
@@ -392,6 +439,8 @@ class Level:
         self.game_ground.blit(self.mask.image, self.mask.rect)
         if self.nirto_timer > 0:
             self.game_ground.blit(self.explode.image, self.explode.rect)
+        if self.tnt_timer > 0:
+            self.game_ground.blit(self.tntexplode.image,self.tntexplode.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
@@ -417,8 +466,10 @@ class Level:
                 self.player.rect.bottom = 336
                 if self.player.face_right == True:
                     self.player.rect.right -= 200
+                    self.mask.rect.right -= 200
                 if self.player.face_right == False:
                     self.player.rect.left += 200
+                    self.mask.rect.left += 200
 
     def update_game_info(self):
         if self.player.dead:
@@ -459,3 +510,23 @@ class Level:
         if self.current_time - self.nirto_timer > 300:
             self.explode.kill()
             self.nirto_timer = 0
+
+    def check_tnt(self):
+        if self.tnt_flag == 0:
+            self.tntexplode.frame_index = 3
+            if self.current_time - self.tnt_timer > 300:
+                self.tntexplode.kill()
+                self.tnt_timer = 0
+        if self.tnt_flag == 1:
+            if self.current_time - self.tnt_timer > 0 and self.current_time - self.tnt_timer < 1000:
+                self.tntexplode.image = self.tntexplode.frames[0]
+            if self.current_time - self.tnt_timer > 1000 and self.current_time - self.tnt_timer < 2000:
+                self.tntexplode.image = self.tntexplode.frames[1]
+            if self.current_time - self.tnt_timer > 2000 and self.current_time - self.tnt_timer < 3000:
+                self.tntexplode.image = self.tntexplode.frames[2]
+            if self.current_time - self.tnt_timer > 3000:
+                self.tntexplode.image = self.tntexplode.frames[3]
+            if self.current_time - self.tnt_timer > 3030:
+                self.tntexplode.kill()
+                self.tnt_timer = 0
+
