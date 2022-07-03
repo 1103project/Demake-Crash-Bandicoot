@@ -23,6 +23,16 @@ class Level:
         self.setup_checkpoints()
         self.setup_fruit()
         self.setup_mask()
+        self.setup_timer()
+        self.setup_explode_sprite()
+
+    def setup_explode_sprite(self):
+        self.explode = stuff.Explode()
+        self.explode.rect.x = 1000
+        self.explode.rect.bottom = 546
+
+    def setup_timer(self):
+        self.nirto_timer = 0
 
     def load_map_data(self):
         file_name = 'level.json'
@@ -122,6 +132,7 @@ class Level:
             self.update_player_position()
             self.check_checkpoints()
             self.check_if_go_die()
+            self.check_nirto()
             self.update_game_window()
             self.info.update(surface)
             self.crate_group.update()
@@ -187,6 +198,8 @@ class Level:
                     if self.check_mask_level():
                         self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
+                        self.nirto_timer = pygame.time.get_ticks()
+                        self.game_ground.blit(self.explode.image, self.explode.rect)
                     else:
                         self.player.go_die()
 
@@ -226,7 +239,9 @@ class Level:
 
         if cratecollide :
             if cratecollide.crate_type == 0:
-                pass
+                if self.player.span == True:
+                    self.game_info['mask_level'] += 1
+                    self.crate_group.remove(cratecollide)
 
             if cratecollide.crate_type == 1:
                 self.game_info['arrow'] = 1
@@ -253,12 +268,12 @@ class Level:
             if cratecollide.crate_type == 6:
                 pass
 
-
             if cratecollide.crate_type == 7:
                 if self.player.span == True:
                     if self.check_mask_level():
                         self.game_info['mask_level'] -= 1
                         self.crate_group.remove(cratecollide)
+
                     else:
                         self.player.go_die()
 
@@ -375,6 +390,8 @@ class Level:
         self.game_ground.blit(self.background, self.game_window, self.game_window)
         self.game_ground.blit(self.player.image, self.player.rect)
         self.game_ground.blit(self.mask.image, self.mask.rect)
+        if self.nirto_timer > 0:
+            self.game_ground.blit(self.explode.image, self.explode.rect)
         self.brick_group.draw(self.game_ground)
         self.crate_group.draw(self.game_ground)
         self.enemy_group.draw(self.game_ground)
@@ -438,4 +455,7 @@ class Level:
         else:
             return True
 
-
+    def check_nirto(self):
+        if self.current_time - self.nirto_timer > 300:
+            self.explode.kill()
+            self.nirto_timer = 0
