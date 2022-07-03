@@ -8,6 +8,8 @@ class MainMenu:
         game_info = {
             'fruit': 0,
             'life': 3,
+            'life_append': 0,
+            'arrow': 0
         }
         self.start(game_info)
     def start(self, game_info):
@@ -65,6 +67,8 @@ class MainMenu:
     def reset_game_info(self):
         self.info.update({
             'fruit': 0,
-            'life': 3
+            'life': 3,
+            'life_append': 0,
+            'arrow': 0
         })
 

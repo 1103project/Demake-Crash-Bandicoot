@@ -122,7 +122,8 @@ class Level:
             self.enemy_group.update(self)
             self.dying_group.update(self)
             self.fruit_group.update(self)
-
+            self.life_fruit_append()
+            self.jump_strengthen()
 
         self.draw(surface)
 
@@ -140,11 +141,33 @@ class Level:
         self.check_y_collision()
         self.check_fruit_collistion()
         self.check_if_on_ice()
+        # self.life_fruit_append()
+
+
     def check_x_collision(self):
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
         if cratecollide:
-            self.check_crate(cratecollide)
+            if cratecollide.crate_type == 2:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+                    self.game_info['fruit'] += 1
+                    self.game_info['life_append'] += 1
+            if cratecollide.crate_type == 3:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 4:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 5:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 7:
+                if self.player.span == True:
+                    self.player.go_die()
+            if cratecollide.crate_type == 8:
+                if self.player.span == True:
+                    self.player.go_die()
             self.adjust_player_x(cratecollide)
 
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
@@ -170,8 +193,32 @@ class Level:
 
         checkcrate_group = pygame.sprite.Group.copy(self.crate_group)
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
-        if cratecollide:
-            self.check_crate(cratecollide)
+
+
+        if cratecollide :
+            if cratecollide.crate_type == 1:
+                self.game_info['arrow'] = 1
+
+            if cratecollide.crate_type == 2:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+                    self.game_info['fruit'] += 1
+                    self.game_info['life_append'] += 1
+            if cratecollide.crate_type == 3:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 4:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 5:
+                if self.player.span == True:
+                    self.crate_group.remove(cratecollide)
+            if cratecollide.crate_type == 7:
+                if self.player.span == True:
+                    self.player.go_die()
+            if cratecollide.crate_type == 8:
+                if self.player.span == True:
+                    self.player.go_die()
             self.adjust_player_y(cratecollide)
 
 
@@ -263,7 +310,18 @@ class Level:
         fruit_collistion = pygame.sprite.spritecollideany(self.player, check_fruit_group)
         if fruit_collistion:
             self.game_info['fruit'] += 1
+            self.game_info['life_append'] += 1
             fruit_collistion.kill()
+
+    def life_fruit_append(self):
+        if self.game_info['life_append'] != 0 and self.game_info['life_append'] % 10 == 0:
+            self.game_info['life'] += 1
+            self.game_info['life_append'] = 0
+
+
+
+
+
 
 
 
@@ -305,8 +363,8 @@ class Level:
 
         if cratecollide and self.player.span == True:
             if cratecollide.crate_type == 1:
-                self.crate_group.remove(cratecollide)
-                self.update_game_info2(5)
+
+                self.game_info['arrow'] = 1
             if cratecollide.crate_type == 2:
                 self.crate_group.remove(cratecollide)
             if cratecollide.crate_type == 3:
@@ -319,3 +377,10 @@ class Level:
                 self.player.go_die()
             if cratecollide.crate_type == 8:
                 self.player.go_die()
+
+    def jump_strengthen(self):
+        if self.game_info['arrow'] == 1 and self.player.state == 'jump':
+            self.player.rect.y -= 100
+            self.game_info['arrow'] = 0
+
+

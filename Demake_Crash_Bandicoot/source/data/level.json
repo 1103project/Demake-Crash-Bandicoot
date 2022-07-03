@@ -2,7 +2,7 @@
   "image_name": "level",
   "map": {"start_x": 0,"end_x": 5760,"player_x": 100,"player_y": 367},
   "ground": [
-    {"x": 0,"y": 546,"width": 4275,"height": 165},
+    {"x": 0,"y": 546,"width": 1300,"height": 165},
     {"x": 1467,"y": 546,"width": 1771,"height": 174},
     {"x": 3300,"y": 501,"width": 421,"height": 100},
     {"x": 4098,"y": 546,"width": 120,"height": 165},

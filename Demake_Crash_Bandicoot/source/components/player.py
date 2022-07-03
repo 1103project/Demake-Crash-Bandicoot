@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_vel = -15
         self.gravity = C.GRAVITY
         self.anti_gravity = C.ANTI_GRAVITY
-        self.max_y_vel = 15
+        self.max_y_vel = 20
         self.max_x_vel = 10
         self.x_accel = 2
 
