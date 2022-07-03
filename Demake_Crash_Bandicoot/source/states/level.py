@@ -194,7 +194,9 @@ class Level:
         cratecollide = pygame.sprite.spritecollideany(self.player, checkcrate_group)
         if cratecollide:
             if cratecollide.crate_type == 0:
-                pass
+                if self.player.span == True:
+                    self.game_info['mask_level'] += 1
+                    self.crate_group.remove(cratecollide)
 
             if cratecollide.crate_type == 1:
                 pass

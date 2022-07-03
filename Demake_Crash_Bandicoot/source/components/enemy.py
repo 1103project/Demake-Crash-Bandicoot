@@ -11,10 +11,8 @@ def create_enemy(enemy_data):
     elif enemy_type == 1:
         enemy = Flyingfish(x, y_bottom, direction, "fish")
     elif enemy_type == 2:
-        enemy = Slim(x, y_bottom, direction, "slim")
-
+        enemy = Skunk(x, y_bottom, direction, "skunk")
     return enemy
-
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y_bottom, direction, name, frame_rects):
@@ -73,6 +71,12 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y += self.y_vel
         if self.state != 'die':
             self.check_y_collisions(level)
+        if self.name == 'fish':
+            if self.rect.top < 560:
+                self.y_vel *= -1
+            if self.rect.bottom > 720:
+                self.y_vel *= -1
+
 
     def check_x_collisions(self,level):
         sprite = pygame.sprite.spritecollideany(self,level.ground_items_group)
@@ -89,7 +93,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.bottom = sprite.rect.top
                 self.y_vel = 0
                 self.state = 'walk'
-
         level.check_will_fall(self)
 
     def fall(self):
@@ -131,15 +134,14 @@ class Flyingfish(Enemy):
     def __init__(self, x, y_bottom, direction, name):
         frame_rects = [(118, 89, 35, 54), (153, 89, 35, 54)]
         Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
-
-class Slim(Enemy):
-    def __init__(self, x, y_bottom, direction, name):
-        frame_rects = [(114, 53, 73, 93), (0, 0, 5, 5)]
-        Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
         self.x_vel = 0
+        self.y_vel = -4
 
-
-
+class Skunk(Enemy):
+    def __init__(self, x, y_bottom, direction, name):
+        frame_rects = [(85,85,92,51),(161,92,90,50)]
+        Enemy.__init__(self,x, y_bottom, direction, name, frame_rects)
+        self.x_vel = 0.02
 
 
 
