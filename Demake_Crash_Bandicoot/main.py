@@ -1,4 +1,4 @@
-import pygame
+import pygame,sys
 from source import tools
 from source.states import main_menu, load_screen, level
 
@@ -6,9 +6,8 @@ from source.states import main_menu, load_screen, level
 def main():
 
     #bgm
-    pygame.mixer.music.load('resourses/music/main_theme_sped_up.ogg')
+    pygame.mixer.music.load('resourses/music/fkudd-kurbp.ogg')
     pygame.mixer.music.play(-1)
-
 
 
 
