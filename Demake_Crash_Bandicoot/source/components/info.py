@@ -18,17 +18,8 @@ class Info:
         if self.state == 'main_menu':
             self.state_labels.append((self.create_label('Start Game',size=50),(190,480)))
             self.state_labels.append((self.create_label('Quit Game',size=50), (190,550)))
-
-
-
         if self.state == 'game_over':
             self.state_labels.append((self.create_label('Game Over', size=50), (390, 320)))
-
-
-
-
-
-
 
     def create_info_labels(self):
         pass

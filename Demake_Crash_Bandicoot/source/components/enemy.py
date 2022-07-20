@@ -72,7 +72,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.state != 'die':
             self.check_y_collisions(level)
         if self.name == 'fish':
-            if self.rect.top < 560:
+            if self.rect.top < 500:
                 self.y_vel *= -1
             if self.rect.bottom > 720:
                 self.y_vel *= -1

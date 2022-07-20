@@ -268,6 +268,8 @@ class Level:
                 else:
                     self.player.go_die()
 
+
+
     def check_y_collision(self):
         # checktnt_group = pygame.sprite.Group(self.tntexplode)
         # tntcollide = pygame.sprite.spritecollideany(self.player, checktnt_group)
@@ -324,9 +326,7 @@ class Level:
                         self.nirto_timer = pygame.time.get_ticks()
                     else:
                         self.player.go_die()
-
             self.adjust_player_y(cratecollide)
-
 
         check_group = pygame.sprite.Group.copy(self.ground_items_group)
         # tools.sprite_group_add(check_group, self.crate_group)
@@ -476,6 +476,7 @@ class Level:
     def update_game_info(self):
         if self.player.dead:
             self.game_info['life'] -= 1
+            self.next = 'level'
         if self.game_info['life'] == 0:
             self.next = 'game_over'
 
